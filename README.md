@@ -1,5 +1,11 @@
-C# Tool framework for AI, allows tools to self describe for AI use.
+C# tool framework for AI. Tools self‑describe their capabilities, inputs, and usage limits so an AI can reason about them.
 
-Tool self describe capabilities, their limits (free, Resstricted ...).
+Tools declare their own schemas, descriptions, and usage rules (free, restricted, etc.)
 
-Tools are added dynamically, as DLLs, Each limits its own use if needed.
+Tools are loaded dynamically as DLLs
+
+Each tool enforces its own limits and behaviour
+
+The host doesn’t need to know anything about a tool in advance
+
+This creates a plug‑and‑play tool ecosystem where the AI can discover, validate, and call tools at runtime.
