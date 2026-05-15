@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebToolRead")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88c695f44e969b512a187568f94189237112667d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b2a4675c78b36cf1428c7ffd591edb680fc7e5a")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebToolRead")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebToolRead")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
