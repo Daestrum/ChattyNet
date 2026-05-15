@@ -16,8 +16,5 @@ namespace TimeTool
             return $"{{ \"time\": \"{now}\" }}";
         }
     }
-
-    
-
 }
 
