@@ -93,6 +93,9 @@ namespace WebToolRead
             var html = await client.GetStringAsync(url);
 
             if (sandbox)
+            {
+                return html;
+            }
 
             // Remove script/style blocks
             html = Regex.Replace(html, "<script[\\s\\S]*?</script>", "", RegexOptions.IgnoreCase);
