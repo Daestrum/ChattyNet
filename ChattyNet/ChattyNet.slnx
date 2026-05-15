@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="../date_tool/DateTool.csproj" Id="b3f1dacd-78e0-4b09-afc0-868648352f60" />
+  <Project Path="../TimeTool/TimeTool.csproj" />
+  <Project Path="../ToolRefernceGuide/ToolRefernceGuide.csproj" Id="423cbeca-03fe-4279-ba91-5ba9f3b3baa7" />
+  <Project Path="../ToolTemplate/ToolTemplate.csproj" Id="59dd6f99-e3b7-4e24-a677-cc5c78f93fb5" />
+  <Project Path="../WebToolRead/WebToolRead.csproj" Id="5a7ff01d-2cd3-4fcb-8781-6ec92741ae50" />
+  <Project Path="ChattyNet.csproj" />
+</Solution>

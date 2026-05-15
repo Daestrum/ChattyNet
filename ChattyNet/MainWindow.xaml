@@ -1,0 +1,44 @@
+﻿<Window x:Class="ChattyNet.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChattyNet"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Output box -->
+        <TextBox x:Name="OutputBox"
+             Grid.Row="0"
+             Margin="0,0,0,10"
+             TextWrapping="Wrap"
+             VerticalScrollBarVisibility="Auto"
+             IsReadOnly="True"
+             AcceptsReturn="True" />
+
+        <!-- Input + Send button -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBox
+                x:Name="InputBox"
+                FontSize="18"
+                AcceptsReturn="True"
+                TextWrapping="Wrap"
+                VerticalScrollBarVisibility="Auto"
+                ContextMenuOpening="InputBox_ContextMenuOpening"
+                Width="680"
+                Height="100" />
+            
+            <Button x:Name="SendButton"
+                Width="100"
+                Height="100"
+                Content="Send"
+                Click="SendButton_Click" />
+        </StackPanel>
+    </Grid>
+
+</Window>
