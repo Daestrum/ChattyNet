@@ -1,7 +1,7 @@
-﻿using TimeTool;
-
+﻿
 namespace TimeTool
 {
+
     public class TimeTool : ITool
     {
         public string Name => "get_time";
@@ -15,6 +15,23 @@ namespace TimeTool
             var now = DateTime.Now.ToString("HH:mm:ss");
             return $"{{ \"time\": \"{now}\" }}";
         }
+    }
+
+    public interface ITool
+    {
+        string Name { get; }
+        string Description { get; }
+        string Schema { get; }
+        ToolType Type { get; }
+        string CanUse { get; }
+        string Run(string jsonInput);
+    }
+        public enum ToolType
+    {
+        Output,
+        Action,
+        Transform,
+        Restricted
     }
 }
 

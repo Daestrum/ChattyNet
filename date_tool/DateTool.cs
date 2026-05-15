@@ -14,6 +14,22 @@
             return $"{{ \"date\": \"{date}\" }}";
         }
     }
+        public interface ITool
+    {
+        string Name { get; }
+        string Description { get; }
+        string Schema { get; }
+        ToolType Type { get; }
+        string CanUse { get; }
+        string Run(string jsonInput);
+    }
+            public enum ToolType
+    {
+        Output,
+        Action,
+        Transform,
+        Restricted
+    }
 }
 
 

@@ -55,7 +55,6 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
 
 [sourceFiles]
 DateTool.cs
-ITool.cs
 obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  DateTool.AssemblyInfo.cs
