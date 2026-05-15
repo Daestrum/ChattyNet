@@ -2,12 +2,12 @@
 namespace TimeTool
 {
 
-    public class TimeTool : ITool
+    public class TimeTool
     {
         public string Name => "get_time";
         public string Description => "Returns the current system time.";
         public string Schema => "{}";
-        public ToolType Type => ToolType.Output;
+        public string Type => "output";
         public string CanUse => "free";
 
         public string Run(string jsonInput)
@@ -17,21 +17,7 @@ namespace TimeTool
         }
     }
 
-    public interface ITool
-    {
-        string Name { get; }
-        string Description { get; }
-        string Schema { get; }
-        ToolType Type { get; }
-        string CanUse { get; }
-        string Run(string jsonInput);
-    }
-        public enum ToolType
-    {
-        Output,
-        Action,
-        Transform,
-        Restricted
-    }
+    
+
 }
 
