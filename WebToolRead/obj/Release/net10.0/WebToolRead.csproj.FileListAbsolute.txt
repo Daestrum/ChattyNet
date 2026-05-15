@@ -9,3 +9,4 @@ C:\chatty_net\WebToolRead\obj\Release\net10.0\WebToolRead.dll
 C:\chatty_net\WebToolRead\obj\Release\net10.0\refint\WebToolRead.dll
 C:\chatty_net\WebToolRead\obj\Release\net10.0\WebToolRead.pdb
 C:\chatty_net\WebToolRead\obj\Release\net10.0\ref\WebToolRead.dll
+C:\chatty_net\WebToolRead\obj\Release\net10.0\WebToolRead.sourcelink.json
