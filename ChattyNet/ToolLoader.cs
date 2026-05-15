@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace ChattyNet
 {
@@ -21,17 +21,21 @@ namespace ChattyNet
 
                 foreach (var type in asm.GetTypes())
                 {
-                    if (type.GetInterface("ITool") != null)
+                    // Must have a public bool Tool property
+                    var toolProp = type.GetProperty("Tool");
+
+                    if (toolProp != null && toolProp.PropertyType == typeof(bool))
                     {
                         var instance = Activator.CreateInstance(type);
-                        if (instance != null)
+
+                        if (instance != null && (bool)toolProp.GetValue(instance) == true)
                             tools.Add(instance);
                     }
                 }
+
             }
 
             return tools;
         }
     }
 }
-

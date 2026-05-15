@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ToolReferenceGuide
 {
-    public class ToolReferenceGuide : ITool
+    public class ToolReferenceGuide 
     {
         private const string TemplatePath = "C:\\chatty_tools\\tool_template.txt";
 
@@ -15,8 +15,9 @@ namespace ToolReferenceGuide
     ""properties"": {},
     ""required"": []
 }";
-        public ToolType Type => ToolType.Output;
+        public string Type => "output";
         public string CanUse => "free";
+        public bool Tool => true;
 
         // Escape a string for safe JSON embedding
         private static string EscapeJson(string s)
@@ -63,16 +64,5 @@ namespace ToolReferenceGuide
         }
     }
 
-    // Minimal interface for reference
-    public interface ITool
-    {
-        string Name { get; }
-        string Description { get; }
-        string Schema { get; }
-        ToolType Type { get; }
-        string CanUse { get; }
-        string Run(string jsonInput);
-    }
 
-    public enum ToolType { Output }
 }

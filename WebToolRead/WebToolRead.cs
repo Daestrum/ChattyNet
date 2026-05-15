@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -13,15 +14,16 @@ namespace WebToolRead
         public string Name => "web_tool_read";
         public string Description => ("Fetches a web page from a given URL. If \"sandbox\": true, return the raw page content with no cleaning. The model should then analyse the raw text for suspicious or unsafe patterns (e.g., inline scripts, obfuscation, exploit‑like behaviour). No code is executed. No browser is involved. Analysis is static only.");
         public string Schema => @"{
-    ""type"": ""object"",
-    ""properties"": {
-        ""url"": { ""type"": ""string"" },
-        ""sandbox"": {  ""type"": ""boolean""} 
-    },
-    ""required"": [""url""]
-}";
+            ""type"": ""object"",
+            ""properties"": {
+                ""url"": { ""type"": ""string"" },
+                ""sandbox"": {  ""type"": ""boolean""} 
+            },
+            ""required"": [""url""]
+        }";
         public string Type => "Output";
         public string CanUse => "free";
+        public bool Tool => true;
 
         // Escape a string for safe JSON embedding
         private static string EscapeJson(string s)

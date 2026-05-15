@@ -9,3 +9,4 @@ C:\chatty_net\date_tool\obj\Release\net10.0\DateTool.dll
 C:\chatty_net\date_tool\obj\Release\net10.0\refint\DateTool.dll
 C:\chatty_net\date_tool\obj\Release\net10.0\DateTool.pdb
 C:\chatty_net\date_tool\obj\Release\net10.0\ref\DateTool.dll
+C:\chatty_net\date_tool\obj\Release\net10.0\DateTool.sourcelink.json

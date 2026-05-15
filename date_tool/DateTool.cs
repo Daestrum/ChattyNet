@@ -7,7 +7,7 @@
         public string Schema => "{}";
         public string Type => "output";
         public string CanUse => "free";
-
+        public bool Tool => true;
         public string Run(string jsonInput)
         {
             var date = DateTime.Now.ToString("yyyy-MM-dd");

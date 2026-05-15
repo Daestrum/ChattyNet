@@ -9,7 +9,7 @@ namespace TimeTool
         public string Schema => "{}";
         public string Type => "output";
         public string CanUse => "free";
-
+        public bool Tool => true;
         public string Run(string jsonInput)
         {
             var now = DateTime.Now.ToString("HH:mm:ss");

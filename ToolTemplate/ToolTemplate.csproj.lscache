@@ -59,7 +59,6 @@ obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  ToolTemplate.AssemblyInfo.cs
  ToolTemplate.GlobalUsings.g.cs
-Tool.cs
 
 [metadataReferences]
 <DOTNET>/packs/Microsoft.NETCore.App.Ref/10.0.8/ref/net10.0/

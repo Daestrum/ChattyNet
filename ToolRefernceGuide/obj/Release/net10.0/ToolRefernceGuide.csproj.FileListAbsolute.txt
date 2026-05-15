@@ -9,3 +9,4 @@ C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.dll
 C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\refint\ToolRefernceGuide.dll
 C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.pdb
 C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ref\ToolRefernceGuide.dll
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.sourcelink.json

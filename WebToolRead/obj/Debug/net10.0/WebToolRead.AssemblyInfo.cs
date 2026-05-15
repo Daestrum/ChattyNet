@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebToolRead")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5062c4681c3d73785bbdfd4638eaed63359cb0d9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+200c730d24415ec0bcc0096926462011c2eede5a")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebToolRead")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebToolRead")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
