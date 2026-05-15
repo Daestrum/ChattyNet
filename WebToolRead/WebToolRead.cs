@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WebToolRead
 {
-    public class web_tool_read : ITool
+    public class web_tool_read 
     {
         public string Name => "web_tool_read";
         public string Description => ("Fetches a web page from a given URL. If \"sandbox\": true, return the raw page content with no cleaning. The model should then analyse the raw text for suspicious or unsafe patterns (e.g., inline scripts, obfuscation, exploit‑like behaviour). No code is executed. No browser is involved. Analysis is static only.");
@@ -20,7 +20,7 @@ namespace WebToolRead
     },
     ""required"": [""url""]
 }";
-        public ToolType Type => ToolType.Output;
+        public string Type => "Output";
         public string CanUse => "free";
 
         // Escape a string for safe JSON embedding
@@ -79,7 +79,7 @@ namespace WebToolRead
         private static string ExtractUrl(string json)
         {
             var match = Regex.Match(json, "\"url\"\\s*:\\s*\"([^\"]+)\"");
-            return match.Success ? match.Groups[1].Value : null;
+            return match.Success ? match.Groups[1].Value : "";
         }
 
         private static async Task<string> FetchAndExtract(string url, bool sandbox)
@@ -113,17 +113,5 @@ namespace WebToolRead
         }
     }
 
-    // Minimal interface for reference
-    public interface ITool
-    {
-        string Name { get; }
-        string Description { get; }
-        string Schema { get; }
-        ToolType Type { get; }
-        string CanUse { get; }
-        string Run(string jsonInput);
-    }
-
-    public enum ToolType { Output }
 }
 
