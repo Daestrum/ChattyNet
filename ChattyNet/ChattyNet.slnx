@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="../date_tool/DateTool.csproj" Id="b3f1dacd-78e0-4b09-afc0-868648352f60" />
+  <Project Path="../DummyTool/DummyTool.csproj" Id="91ea8735-8785-460e-a4b8-7c7df88d51e9" />
   <Project Path="../TimeTool/TimeTool.csproj" />
   <Project Path="../ToolRefernceGuide/ToolRefernceGuide.csproj" Id="423cbeca-03fe-4279-ba91-5ba9f3b3baa7" />
   <Project Path="../WebToolRead/WebToolRead.csproj" Id="5a7ff01d-2cd3-4fcb-8781-6ec92741ae50" />

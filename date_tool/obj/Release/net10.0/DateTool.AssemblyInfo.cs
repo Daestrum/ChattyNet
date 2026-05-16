@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DateTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+200c730d24415ec0bcc0096926462011c2eede5a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce88e7ca6b5e9944482eeaa832567d643f68943f")]
 [assembly: System.Reflection.AssemblyProductAttribute("DateTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DateTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

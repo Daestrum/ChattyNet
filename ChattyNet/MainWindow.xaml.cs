@@ -25,7 +25,9 @@ namespace ChattyNet
         private LlmClient _llm;
         private List<Dictionary<string, object>> _messages = new();
         private const int MaxMessages = 10;
-
+        private bool _isToolInUse = false;   // ⭐ SAFETY GUARD
+        private string toolFolder = @"C:\chatty_tools";
+        private List<object> _toolSpecs;
         public MainWindow()
         {
             InitializeComponent();
@@ -35,7 +37,8 @@ namespace ChattyNet
 
             _llm = new LlmClient("http://192.168.0.44:1234");
 
-            var toolFolder = @"C:\chatty_tools";
+            ToolRefresher.Initialize(toolFolder);
+            ToolRefresher.Start();   // ← leave commented for now
 
             _tools = ToolLoader.LoadTools(toolFolder);
         }
@@ -92,14 +95,14 @@ namespace ChattyNet
             // Build context + visible tools
             var context = BuildContext();
             var visibleTools = GetVisibleTools(userInput);
-            var toolSpecs = BuildToolSpecs(visibleTools);
+            _toolSpecs = BuildToolSpecs(visibleTools);
 
             // First LLM call
             var payload = new
             {
                 model = "nvidia/nemotron-3-nano-omni",
                 messages = context,
-                tools = toolSpecs
+                tools = _toolSpecs
             };
 
             var doc = await _llm.ChatAsync(payload);
@@ -119,7 +122,7 @@ namespace ChattyNet
                 OutputBox.AppendText(doc.RootElement.ToString() + "\n");
                 return "JSON parse error — see output.";
             }
-           
+
             // -------------------------
             // TOOL CALL?
             // -------------------------
@@ -129,7 +132,6 @@ namespace ChattyNet
             {
                 var call = toolCalls[0];
                 var func = call.GetProperty("function");
-
                 var toolName = func.GetProperty("name").GetString();
                 var argsJson = func.GetProperty("arguments").GetString() ?? "{}";
                 var callId = call.GetProperty("id").GetString();
@@ -142,15 +144,25 @@ namespace ChattyNet
                 if (tool == null)
                     return $"AI requested tool '{toolName}' but it was not found.";
 
-                // Run tool
-                var runMethod = tool.GetType().GetMethod("Run");
-                var result = runMethod.Invoke(tool, new object[] { argsJson })?.ToString();
+                object result;
+
+                // ⭐ SAFETY GUARD — prevent unload while tool is running
+                _isToolInUse = true;
+                try
+                {
+                    var runMethod = tool.GetType().GetMethod("Run");
+                    result = runMethod.Invoke(tool, new object[] { argsJson })?.ToString();
+                }
+                finally
+                {
+                    _isToolInUse = false;
+                }
 
                 // 🔵 LOG TOOL REPLY
-                LogToolReply(callId, result ?? "{}");
+                LogToolReply(callId, result.ToString() ?? "{}");
 
                 // Add tool result to buffer WITH ID
-                AddMessage("tool", result ?? "{}", callId);
+                AddMessage("tool", result.ToString() ?? "{}", callId);
 
                 // Second LLM call (NO model, NO tools)
                 var payload2 = new
@@ -167,17 +179,65 @@ namespace ChattyNet
                                 .GetString();
 
                 AddMessage("assistant", final);
+
+                _isToolInUse = false;   // just in case
+
+                ApplyRefresherChanges();
                 return final;
             }
 
-    
             // -------------------------
             // NORMAL ASSISTANT REPLY
             // -------------------------
             var text = msg.GetProperty("content").GetString();
                 AddMessage("assistant", text);
-                return text;
+                ApplyRefresherChanges();
+            return text;
         }
+        private void ApplyRefresherChanges()
+        {
+            if (_isToolInUse)
+                return;
+
+            // 1. Handle removed tools
+            foreach (var removed in ToolRefresher.RemovedTools)
+            {
+                var entry = _tools.FirstOrDefault(t => t.Instance.GetType().Name == removed);
+                if (entry.Instance != null)
+                {
+                    entry.Context.Unload();
+                    _tools.Remove(entry);
+                }
+
+            }
+
+            // 2. Handle updated tools (remove + reload)
+            foreach (var changed in ToolRefresher.UpdatedTools)
+            {
+                var entry = _tools.FirstOrDefault(t => t.Instance.GetType().Name == changed);
+                if (entry.Instance != null)
+                {
+                    entry.Context.Unload();
+                    _tools.Remove(entry);
+                }
+
+                // Reload using ToolLoader
+                var newTools = ToolLoader.LoadTools(toolFolder);
+                foreach (var t in newTools)
+                {
+                    if (t.Instance.GetType().Name == changed)
+                        _tools.Add(t);
+                }
+            }
+
+            // 3. Rebuild schema
+            _toolSpecs = BuildToolSpecs(GetVisibleTools(""));
+
+            ToolRefresher.NewTools.Clear();
+            ToolRefresher.UpdatedTools.Clear();
+            ToolRefresher.RemovedTools.Clear();
+        }
+
 
         private void AddMessage(string role, string content, string toolCallId = null)
         {
