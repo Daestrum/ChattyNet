@@ -21,7 +21,7 @@ namespace ChattyNet
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<object> _tools;
+        private List<(object Instance, ToolLoadContext Context)> _tools;
         private LlmClient _llm;
         private List<Dictionary<string, object>> _messages = new();
         private const int MaxMessages = 10;
@@ -218,8 +218,11 @@ namespace ChattyNet
 
         private object? FindToolByName(string name)
         {
-            return _tools.FirstOrDefault(t =>
-                t.GetType().GetProperty("Name")?.GetValue(t)?.ToString() == name);
+            return _tools
+                    .Select(t => t.Instance)
+                    .FirstOrDefault(inst =>
+        inst.GetType().GetProperty("Name")?.GetValue(inst)?.ToString() == name);
+
         }
 
         private List<object> BuildToolSpecs(List<object> visibleTools)
@@ -290,8 +293,10 @@ namespace ChattyNet
         {
             var visible = new List<object>();
 
-            foreach (var tool in _tools)
+            foreach (var (Instance,_) in _tools)
             {
+                var tool = Instance;
+
                 var name = tool.GetType().GetProperty("Name")?.GetValue(tool)?.ToString();
                 var canUse = tool.GetType().GetProperty("CanUse")?.GetValue(tool)?.ToString();
 
