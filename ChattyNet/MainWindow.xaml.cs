@@ -41,6 +41,8 @@ namespace ChattyNet
             ToolRefresher.Start();   // ← leave commented for now
 
             _tools = ToolLoader.LoadTools(toolFolder);
+
+            DebugToolList("Startup");
         }
 
         private async void SendButton_Click(object sender, RoutedEventArgs e)
@@ -210,6 +212,20 @@ namespace ChattyNet
                 }
 
             }
+            // 1b. Handle NEW tools
+            foreach (var added in ToolRefresher.NewTools)
+            {
+                var newTools = ToolLoader.LoadTools(toolFolder);
+                foreach (var t in newTools)
+                {
+                    if (t.Instance.GetType().Name == added)
+                    {
+                        _tools.Add(t);
+                        Logger.Write($"[DEBUG] Added NEW tool: {added}");
+                    }
+                }
+            }
+
 
             // 2. Handle updated tools (remove + reload)
             foreach (var changed in ToolRefresher.UpdatedTools)
@@ -232,6 +248,13 @@ namespace ChattyNet
 
             // 3. Rebuild schema
             _toolSpecs = BuildToolSpecs(GetVisibleTools(""));
+
+            OutputBox.AppendText("tool count = " + _toolSpecs.Count);
+
+            DebugToolList("AfterRefresh");
+
+            _tools = ToolLoader.LoadTools(toolFolder);
+            Logger.Write($"[DEBUG] Reloaded tools, count = {_tools.Count}");
 
             ToolRefresher.NewTools.Clear();
             ToolRefresher.UpdatedTools.Clear();
@@ -348,6 +371,17 @@ namespace ChattyNet
             );
         }
 
+        private void DebugToolList(string label)
+        {
+            Logger.Write($"[DEBUG] Tool list at: {label}");
+
+            foreach (var (Instance, _) in _tools)
+            {
+                var name = Instance.GetType().GetProperty("Name")?.GetValue(Instance)?.ToString();
+                var type = Instance.GetType().Name;
+                Logger.Write($"[DEBUG]   - {type} (Name={name})");
+            }
+        }
 
         private List<object> GetVisibleTools(string userInput)
         {

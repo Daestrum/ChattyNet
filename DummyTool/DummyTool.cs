@@ -2,15 +2,15 @@
 {
     public class DummyTool
     {
-        public bool Tool => true;
-        public string Name => "dummy_tool";
-        public string Description => "A test tool.";
+        public string Name => "dummy";
+        public string Description => "Just a dummy tool for testing";
         public string Schema => "{}";
-        public string CanUse => "free";
         public string Type => "output";
+        public string CanUse => "free";
+        public bool Tool => true;
         public string Run(string args)
         {
-            return "{\"result\":\"dummy ok\"}";
+            return $"{{ \"dummy_result\": \"dummy_value\" }}";
         }
     }
 }

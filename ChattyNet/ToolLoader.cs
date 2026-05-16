@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 
+
 namespace ChattyNet
 {
     // Each tool DLL gets its own unloadable context
@@ -22,43 +23,40 @@ namespace ChattyNet
             if (!Directory.Exists(folder))
                 return tools;
 
-            foreach (var dll in Directory.GetFiles(folder, "*.dll"))
+            var dllFiles = Directory.GetFiles(folder, "*.dll");
+            foreach (var dll in dllFiles)
             {
-                try
+                Logger.Write($"Found DLL: {dll}\n");
+            }
+
+            foreach (var dll in dllFiles)
+            {
+                var alc = new ToolLoadContext();
+                
+                var asm = alc.LoadFromAssemblyPath(Path.GetFullPath(dll));
+
+                bool foundTool = false;
+
+                foreach (var type in asm.GetTypes())
                 {
-                    // Create a new unloadable context for this DLL
-                    var alc = new ToolLoadContext();
+                    var toolProp = type.GetProperty("Tool");
 
-                    // Load the assembly into this context
-                    var asm = alc.LoadFromAssemblyPath(Path.GetFullPath(dll));
-
-                    foreach (var type in asm.GetTypes())
+                    if (toolProp != null && toolProp.PropertyType == typeof(bool))
                     {
-                        // Must have a public bool Tool property
-                        var toolProp = type.GetProperty("Tool");
+                        var instance = Activator.CreateInstance(type);
 
-                        if (toolProp != null && toolProp.PropertyType == typeof(bool))
+                        if (instance != null && (bool)toolProp.GetValue(instance) == true)
                         {
-                            var instance = Activator.CreateInstance(type);
-
-                            if (instance != null && (bool)toolProp.GetValue(instance) == true)
-                            {
-                                tools.Add((instance, alc));
-                            }
-                            else
-                            {
-                                // If not used, unload the context immediately
-                                alc.Unload();
-                            }
+                            tools.Add((instance, alc));
+                            foundTool = true;
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error loading tool from {dll}: {ex.Message}");
-                }
-            }
 
+                if (!foundTool)
+                    alc.Unload();
+            }
+            
             return tools;
         }
     }
