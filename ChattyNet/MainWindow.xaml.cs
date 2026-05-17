@@ -21,17 +21,19 @@ namespace ChattyNet
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindow Instance { get; private set; }
         private List<(object Instance, ToolLoadContext Context)> _tools;
         private LlmClient _llm;
         private List<Dictionary<string, object>> _messages = new();
         private const int MaxMessages = 10;
-        private bool _isToolInUse = false;   // ⭐ SAFETY GUARD
+        public bool _isToolInUse = false;   // ⭐ SAFETY GUARD
         private string toolFolder = @"C:\chatty_tools";
         private List<object> _toolSpecs;
         public DLLStore dllStore;
 
         public MainWindow()
         {
+            Instance = this;
             InitializeComponent();
             
             OutputBox.FontSize = 18;
@@ -43,9 +45,9 @@ namespace ChattyNet
             ToolRefresher.Initialize(toolFolder);
             ToolRefresher.Start();   // ← leave commented for now
 
-            _tools = ToolLoader.LoadTools(toolFolder);
-
-            DebugToolList("Startup");
+            //_tools = ToolLoader.LoadTools(toolFolder);
+            _tools = new List<(object Instance, ToolLoadContext Context)>();
+            //DebugToolList("Startup");
         }
 
         private async void SendButton_Click(object sender, RoutedEventArgs e)
@@ -100,7 +102,9 @@ namespace ChattyNet
             // Build context + visible tools
             var context = BuildContext();
             var visibleTools = GetVisibleTools(userInput);
-            _toolSpecs = BuildToolSpecs(visibleTools);
+            //_toolSpecs = BuildToolSpecs(visibleTools);
+            
+            _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(DLLStore.Instance._lastToolSpecJson);
 
             // First LLM call
             var payload = new
@@ -199,69 +203,80 @@ namespace ChattyNet
                 ApplyRefresherChanges();
             return text;
         }
+        /*        private void ApplyRefresherChanges()
+                {
+                    if (_isToolInUse)
+                        return;
+
+                    // 1. Handle removed tools
+                    foreach (var removed in ToolRefresher.RemovedTools)
+                    {
+                        var entry = _tools.FirstOrDefault(t => t.Instance.GetType().Name == removed);
+                        if (entry.Instance != null)
+                        {
+                            entry.Context.Unload();
+                            _tools.Remove(entry);
+                        }
+
+                    }
+                    // 1b. Handle NEW tools
+                    foreach (var added in ToolRefresher.NewTools)
+                    {
+                        var newTools = ToolLoader.LoadTools(toolFolder);
+                        foreach (var t in newTools)
+                        {
+                            if (t.Instance.GetType().Name == added)
+                            {
+                                _tools.Add(t);
+                                Logger.Write($"[DEBUG] Added NEW tool: {added}");
+                            }
+                        }
+                    }
+
+
+                    // 2. Handle updated tools (remove + reload)
+                    foreach (var changed in ToolRefresher.UpdatedTools)
+                    {
+                        var entry = _tools.FirstOrDefault(t => t.Instance.GetType().Name == changed);
+                        if (entry.Instance != null)
+                        {
+                            entry.Context.Unload();
+                            _tools.Remove(entry);
+                        }
+
+                        // Reload using ToolLoader
+                        var newTools = ToolLoader.LoadTools(toolFolder);
+                        foreach (var t in newTools)
+                        {
+                            if (t.Instance.GetType().Name == changed)
+                                _tools.Add(t);
+                        }
+                    }
+
+                    // 3. Rebuild schema
+                    _toolSpecs = BuildToolSpecs(GetVisibleTools(""));
+
+                    OutputBox.AppendText("tool count = " + _toolSpecs.Count);
+
+                    DebugToolList("AfterRefresh");
+
+                    _tools = ToolLoader.LoadTools(toolFolder);
+                    Logger.Write($"[DEBUG] Reloaded tools, count = {_tools.Count}");
+
+                    ToolRefresher.NewTools.Clear();
+                    ToolRefresher.UpdatedTools.Clear();
+                    ToolRefresher.RemovedTools.Clear();
+                }*/
         private void ApplyRefresherChanges()
         {
             if (_isToolInUse)
                 return;
 
-            // 1. Handle removed tools
-            foreach (var removed in ToolRefresher.RemovedTools)
-            {
-                var entry = _tools.FirstOrDefault(t => t.Instance.GetType().Name == removed);
-                if (entry.Instance != null)
-                {
-                    entry.Context.Unload();
-                    _tools.Remove(entry);
-                }
-
-            }
-            // 1b. Handle NEW tools
-            foreach (var added in ToolRefresher.NewTools)
-            {
-                var newTools = ToolLoader.LoadTools(toolFolder);
-                foreach (var t in newTools)
-                {
-                    if (t.Instance.GetType().Name == added)
-                    {
-                        _tools.Add(t);
-                        Logger.Write($"[DEBUG] Added NEW tool: {added}");
-                    }
-                }
-            }
-
-
-            // 2. Handle updated tools (remove + reload)
-            foreach (var changed in ToolRefresher.UpdatedTools)
-            {
-                var entry = _tools.FirstOrDefault(t => t.Instance.GetType().Name == changed);
-                if (entry.Instance != null)
-                {
-                    entry.Context.Unload();
-                    _tools.Remove(entry);
-                }
-
-                // Reload using ToolLoader
-                var newTools = ToolLoader.LoadTools(toolFolder);
-                foreach (var t in newTools)
-                {
-                    if (t.Instance.GetType().Name == changed)
-                        _tools.Add(t);
-                }
-            }
-
-            // 3. Rebuild schema
-            _toolSpecs = BuildToolSpecs(GetVisibleTools(""));
-
-            OutputBox.AppendText("tool count = " + _toolSpecs.Count);
+            _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(DLLStore.Instance._lastToolSpecJson);
 
             DebugToolList("AfterRefresh");
 
-            _tools = ToolLoader.LoadTools(toolFolder);
-            Logger.Write($"[DEBUG] Reloaded tools, count = {_tools.Count}");
-
-            ToolRefresher.NewTools.Clear();
-            ToolRefresher.UpdatedTools.Clear();
-            ToolRefresher.RemovedTools.Clear();
+            //ToolRefresher.Clear();
         }
 
 

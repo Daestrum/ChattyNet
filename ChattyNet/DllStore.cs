@@ -8,6 +8,7 @@ using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using static ChattyNet.ToolRefresher;
 
 namespace ChattyNet
@@ -50,14 +51,31 @@ namespace ChattyNet
             public string Type { get; set; }
             public string CanUse { get; set; }
         }
+        public class ToolSchema
+        {
+            [JsonPropertyName("name")]
+            public string Name { get; set; }
 
+            [JsonPropertyName("description")]
+            public string Description { get; set; }
+
+            // Keep this flexible – it's arbitrary JSON
+            [JsonPropertyName("parameters")]
+            public JsonElement Parameters { get; set; }
+
+            [JsonPropertyName("canUse")]
+            public string CanUse { get; set; }
+
+            [JsonPropertyName("type")]
+            public string Type { get; set; }
+        }
         private bool _showDebug = false;
 
         private int _maxLiveSize = 10;
         public bool LiveIsDirty => LiveDllStore.Values.Any(e => e.Dirty);
         public bool ReserveIsDirty => ReserveDllStore.Values.Any(e => e.Dirty);
 
-        private string _lastToolSpecJson = "";
+        public string _lastToolSpecJson = "";
         private string _cachedToolSpecJson = "";
 
 
@@ -68,40 +86,73 @@ namespace ChattyNet
         {
             
         }
-/*        public void ReadAllTools(string folder)
+        /*        public void ReadAllTools(string folder)
+                {
+                    foreach (var path in Directory.GetFiles(folder, "*.dll"))
+                    {
+                        // 1. Read bytes
+                        byte[] bytes = File.ReadAllBytes(path);
+                        // 2. Get timestamp
+                        DateTime ts = File.GetLastWriteTime(path);
+                        // 3. Extract real assembly name from bytes
+                        string name = GetAssemblyName(bytes);
+                        // 4. Store in LIVE or RESERVE depending on capacity
+                        if (LiveDllStore.Count < _maxLiveSize)
+                        {
+                            LiveDllStore[name] = new LiveDllEntry
+                            {
+                                Bytes = bytes,
+                                Timestamp = ts
+                            };
+                        }
+                        else
+                        {
+                            ReserveDllStore[name] = new ReserveDllEntry
+                            {
+                                Bytes = bytes,
+                                Timestamp = ts
+                            };
+                        }
+                    }
+                }*/
+
+        public List<object> ConvertSchemaToToolList(string schemaJson)
         {
-            foreach (var path in Directory.GetFiles(folder, "*.dll"))
+            var schema = JsonSerializer.Deserialize<List<ToolSchema>>(schemaJson)
+                         ?? new List<ToolSchema>();
+
+            var list = new List<object>();
+
+            foreach (var s in schema)
             {
-                // 1. Read bytes
-                byte[] bytes = File.ReadAllBytes(path);
-                // 2. Get timestamp
-                DateTime ts = File.GetLastWriteTime(path);
-                // 3. Extract real assembly name from bytes
-                string name = GetAssemblyName(bytes);
-                // 4. Store in LIVE or RESERVE depending on capacity
-                if (LiveDllStore.Count < _maxLiveSize)
+                list.Add(new
                 {
-                    LiveDllStore[name] = new LiveDllEntry
+                    type = "function",
+                    function = new
                     {
-                        Bytes = bytes,
-                        Timestamp = ts
-                    };
-                }
-                else
-                {
-                    ReserveDllStore[name] = new ReserveDllEntry
-                    {
-                        Bytes = bytes,
-                        Timestamp = ts
-                    };
-                }
+                        name = s.Name,
+                        description = s.Description,
+                        // Pass parameters through as raw JSON
+                        parameters =
+                            s.Parameters.ValueKind == JsonValueKind.Undefined ||
+                            s.Parameters.ValueKind == JsonValueKind.Null ||
+                            s.Parameters.ValueKind == JsonValueKind.Object && s.Parameters.EnumerateObject().Count() == 0
+                                ? JsonDocument.Parse("{\"type\":\"object\",\"properties\":{}}").RootElement
+                                : s.Parameters
+                    }
+                });
             }
-        }*/
+
+            return list;
+        }
+
 
         public void ApplyChanges(RefreshBatch batch)
         {
             bool anyChanges = false;
-
+            
+            if (MainWindow.Instance._isToolInUse) return; 
+            
             // 1. Handle NEW tools
             foreach (var name in batch.NewTools)
             {
@@ -144,7 +195,9 @@ namespace ChattyNet
                 Logger.Write("\n\nToolSpec: " + newSpec);
                 _lastToolSpecJson = newSpec;
             }
-
+            batch.NewTools.Clear();
+            batch.UpdatedTools.Clear();
+            batch.RemovedTools.Clear();
         }
 
         public void ReadDllFromDisk(string name)

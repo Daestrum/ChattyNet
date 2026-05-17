@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DummyTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+367a8c0b90de28f89deac6dec6118cd98e141935")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e9332897a3cd8ec81e6fdfe5f202d1d8500fcd1e")]
 [assembly: System.Reflection.AssemblyProductAttribute("DummyTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DummyTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
