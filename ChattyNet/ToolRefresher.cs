@@ -11,7 +11,7 @@ namespace ChattyNet
 {
     public static class ToolRefresher
     {
-        private static string _folder;
+        public static string _folder;
         private static int _intervalMs;
         private static CancellationTokenSource _cts;
                // Tracks last known state
@@ -138,6 +138,7 @@ namespace ChattyNet
                 }
             }
             DLLStore.Instance.ApplyChanges(batch);
+
         }
 
         private static string ComputeHash(string file)

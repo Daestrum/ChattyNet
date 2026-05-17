@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
+using System.Runtime.Loader;
 using System.Text;
+using System.Text.Json;
 using static ChattyNet.ToolRefresher;
 
 namespace ChattyNet
@@ -38,8 +41,18 @@ namespace ChattyNet
             Modified,
             Removed
         }
+        public sealed class ToolProbeResult
+        {
+            public bool IsTool { get; set; }
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public string Schema { get; set; }
+            public string Type { get; set; }
+            public string CanUse { get; set; }
+        }
 
-       
+        private bool _showDebug = false;
+
         private int _maxLiveSize = 10;
         public bool LiveIsDirty => LiveDllStore.Values.Any(e => e.Dirty);
         public bool ReserveIsDirty => ReserveDllStore.Values.Any(e => e.Dirty);
@@ -82,23 +95,68 @@ namespace ChattyNet
         }
         public void ApplyChanges(RefreshBatch batch)
         {
+            bool anyChanges = false;
+
+            // 1. Handle NEW tools
             foreach (var name in batch.NewTools)
+            {
                 Logger.Write($"  NEW: {name}");
-            foreach (var name in batch.UpdatedTools)
-                Logger.Write($"  UPDATED: {name}");
-            foreach (var name in batch.RemovedTools)
-                Logger.Write($"  REMOVED: {name}");
-
-            foreach (var name in batch.NewTools)
+                ReadDllFromDisk(name);          // creates LiveDllEntry with bytes + timestamp
                 MarkEntry(name, ChangeFlag.New);
-
+                anyChanges = true;
+                BuildDllChain(name);              // loads assembly, creates instance, etc.
+            }
+            
+            // 2. Handle UPDATED tools
             foreach (var name in batch.UpdatedTools)
+            {
+                Logger.Write($"  UPDATED: {name}");
+                ReadDllFromDisk(name);          // overwrite bytes + timestamp
                 MarkEntry(name, ChangeFlag.Modified);
+                anyChanges = true;
+            }
 
+            // 3. Handle REMOVED tools
             foreach (var name in batch.RemovedTools)
+            {
+                Logger.Write($"  REMOVED: {name}");
                 MarkEntry(name, ChangeFlag.Removed);
+                anyChanges = true;
+            }
+
+            // 4. Debug dump only if something changed
+            if (anyChanges)
+                debugToolStore();
+            
+            
+            Logger.Write("\n\nToolSpec: " + GetNewToolSchema());
         }
 
+        public void ReadDllFromDisk(string name)
+        {
+            if (!LiveDllStore.ContainsKey(name))
+            {
+                LiveDllStore[name] = new LiveDllEntry
+                {
+                    Name = name,
+                    Timestamp = GetRealTimestamp(name),
+                    Bytes = GetRealBytes(name),
+                    flag = ChangeFlag.None,
+                    Dirty = false
+                };
+            }
+        }
+        private DateTime GetRealTimestamp(string dllName)
+        {
+            var path = Path.Combine(ToolRefresher._folder, dllName+".dll");
+            return File.GetLastWriteTime(path);
+        }
+        private byte[] GetRealBytes(string dllName)
+        {
+            Logger.Write($"\nReading real bytes for {dllName} from disk at {ToolRefresher._folder}");
+            var path = Path.Combine(ToolRefresher._folder, dllName + ".dll");
+            return File.ReadAllBytes(path);
+        }
         private void MarkEntry(string name, ChangeFlag flag)
         {
             if (!LiveDllStore.TryGetValue(name, out var entry))
@@ -110,59 +168,133 @@ namespace ChattyNet
             entry.flag = flag;
             entry.Dirty = true;
         }
+        private void BuildDllChain(string name)
+        {
+            if (!LiveDllStore.TryGetValue(name, out var entry))
+                throw new Exception($"Entry not found: {name}");
+
+            // 1. Load assembly from bytes
+            var alc = new AssemblyLoadContext(Guid.NewGuid().ToString(), isCollectible: true);
+            using var ms = new MemoryStream(entry.Bytes);
+            var asm = alc.LoadFromStream(ms);
+
+            // 2. Find the tool type
+            var toolType = asm.GetTypes()
+                .FirstOrDefault(t => t.GetProperty("Name") != null);
+
+            if (toolType == null)
+                throw new Exception($"No tool type found in {name}");
+
+            // 3. Create instance
+            var instance = Activator.CreateInstance(toolType);
+
+            // 4. Store everything back into the entry
+            entry.Alc = alc;
+            entry.Assembly = asm;
+            entry.Instance = instance;
+
+            Logger.Write("\nBuilt DLL chain for " + name);
+        }
 
         public string GetNewToolSchema()
         {
-            var sb = new StringBuilder();
-            sb.Append("[\n");
-
-            bool first = true;
+            var list = new List<object>();
 
             foreach (var entry in LiveDllStore.Values)
             {
-                if (entry.flag == ChangeFlag.Removed)
+                if (entry.Instance == null)
                     continue;
 
                 var inst = entry.Instance;
-                if (inst == null)
-                    continue;
-
                 var type = inst.GetType();
 
-                // Read metadata via reflection
                 string name = type.GetProperty("Name")?.GetValue(inst)?.ToString();
                 string description = type.GetProperty("Description")?.GetValue(inst)?.ToString();
                 string schemaJson = type.GetProperty("Schema")?.GetValue(inst)?.ToString();
                 string toolType = type.GetProperty("Type")?.GetValue(inst)?.ToString();
                 string canUse = type.GetProperty("CanUse")?.GetValue(inst)?.ToString();
 
-                if (!first)
-                    sb.Append(",\n");
+                JsonElement parameters;
+                try
+                {
+                    parameters = JsonSerializer.Deserialize<JsonElement>(schemaJson);
+                }
+                catch
+                {
+                    parameters = JsonDocument.Parse("{}").RootElement;
+                }
 
-                first = false;
-
-                sb.Append("  {\n");
-                sb.AppendFormat("    \"name\": \"{0}\",\n", name);
-                sb.AppendFormat("    \"description\": \"{0}\",\n", description);
-                sb.AppendFormat("    \"parameters\": {0},\n", schemaJson);
-                sb.AppendFormat("    \"canUse\": \"{0}\",\n", canUse);
-                sb.AppendFormat("    \"type\": \"{0}\"\n", toolType);
-                sb.Append("  }");
+                list.Add(new
+                {
+                    name,
+                    description,
+                    parameters,
+                    canUse,
+                    type = toolType
+                });
             }
 
-            sb.Append("\n]");
-            return sb.ToString();
+            return JsonSerializer.Serialize(list); // compact one-line JSON
         }
 
+        public ToolProbeResult ProbeToolMetadata(byte[] bytes)
+            {
+                var alc = new AssemblyLoadContext("Probe", isCollectible: true);
 
-        public void debugToolStore()
+                try
+                {
+                    using var ms = new MemoryStream(bytes);
+                    var asm = alc.LoadFromStream(ms);
+
+                    // You can tighten this later (e.g. by interface or attribute)
+                    var toolType = asm.GetTypes()
+                        .FirstOrDefault(t =>
+                            t.GetProperty("Name") != null &&
+                            t.GetProperty("Description") != null &&
+                            t.GetProperty("Schema") != null);
+
+                    if (toolType == null)
+                    {
+                        return new ToolProbeResult
+                        {
+                            IsTool = false
+                        };
+                    }
+
+                    var instance = Activator.CreateInstance(toolType);
+
+                    string name = toolType.GetProperty("Name")?.GetValue(instance)?.ToString();
+                    string description = toolType.GetProperty("Description")?.GetValue(instance)?.ToString();
+                    string schema = toolType.GetProperty("Schema")?.GetValue(instance)?.ToString();
+                    string type = toolType.GetProperty("Type")?.GetValue(instance)?.ToString();
+                    string canUse = toolType.GetProperty("CanUse")?.GetValue(instance)?.ToString();
+
+                    return new ToolProbeResult
+                    {
+                        IsTool = true,
+                        Name = name,
+                        Description = description,
+                        Schema = schema,
+                        Type = type,
+                        CanUse = canUse
+                    };
+                }
+                finally
+                {
+                    alc.Unload();
+                }
+    }
+
+
+
+    public void debugToolStore()
         {
-            Logger.Write("LIVE DLLs: {LiveDllStore.Count}\n");
+            Logger.Write($"\nLIVE DLLs: {LiveDllStore.Count}\n");
             foreach (var kvp in LiveDllStore)
             {
-                Logger.Write($"LIVE - {kvp.Key} (Timestamp: {kvp.Value.Timestamp})\n");
+                Logger.Write($"LIVE - {kvp.Key} (Timestamp: {kvp.Value.Timestamp}) Flag: {kvp.Value.flag} Bytes held: {kvp.Value.Bytes.Length}\n");
             }
-            Logger.Write("\nRESERVE DLLs: {ReserveDllStore.Count} \n");
+            Logger.Write($"\nRESERVE DLLs: {ReserveDllStore.Count} \n");
             foreach (var kvp in ReserveDllStore)
             {
                 Logger.Write($"RESERVE - {kvp.Key} (Timestamp: {kvp.Value.Timestamp})\n");
