@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace ChattyNet
 {
@@ -19,6 +21,13 @@ namespace ChattyNet
         public static List<string> NewTools = new();
         public static List<string> UpdatedTools = new();
         public static List<string> RemovedTools = new();
+        
+        public class RefreshBatch
+        {
+            public List<string> NewTools = new();
+            public List<string> UpdatedTools = new();
+            public List<string> RemovedTools = new();
+        }
 
         public static void Initialize(string folder, int interval = 5000)
         {
@@ -72,6 +81,8 @@ namespace ChattyNet
             UpdatedTools.Clear();
             RemovedTools.Clear();
 
+            RefreshBatch batch = new RefreshBatch();
+
             if (!Directory.Exists(_folder))
                 return;
 
@@ -89,6 +100,7 @@ namespace ChattyNet
                     Logger.Write($"[Refresher] NEW tool detected: {name}");
                     NewTools.Add(name);
                     _known[dll] = (ts, ComputeHash(dll));
+                    batch.NewTools.Add(name);
                     continue;
                 }
 
@@ -102,7 +114,7 @@ namespace ChattyNet
                         var name = Path.GetFileNameWithoutExtension(dll);
                         Logger.Write($"[Refresher] UPDATED tool detected: {name}");
                         UpdatedTools.Add(name);
-
+                        batch.UpdatedTools.Add(name);
                         _known[dll] = (ts, newHash);
                     }
                     else
@@ -121,10 +133,11 @@ namespace ChattyNet
                     var name = Path.GetFileNameWithoutExtension(knownDll);
                     Logger.Write($"[Refresher] REMOVED tool detected: {name}");
                     RemovedTools.Add(name);
-
+                    batch.RemovedTools.Add(name);    
                     _known.Remove(knownDll);
                 }
             }
+            DLLStore.Instance.ApplyChanges(batch);
         }
 
         private static string ComputeHash(string file)

@@ -28,6 +28,8 @@ namespace ChattyNet
         private bool _isToolInUse = false;   // ⭐ SAFETY GUARD
         private string toolFolder = @"C:\chatty_tools";
         private List<object> _toolSpecs;
+        public DLLStore dllStore;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,6 +38,7 @@ namespace ChattyNet
             InputBox.FontSize = 18;
 
             _llm = new LlmClient("http://192.168.0.44:1234");
+            
 
             ToolRefresher.Initialize(toolFolder);
             ToolRefresher.Start();   // ← leave commented for now
