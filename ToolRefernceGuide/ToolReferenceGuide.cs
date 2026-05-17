@@ -11,10 +11,10 @@ namespace ToolReferenceGuide
         public string Name => "tool_reference_guide";
         public string Description => "Returns the gold-standard tool template so Nemo can refresh the correct tool structure.";
         public string Schema => @"{
-    ""type"": ""object"",
-    ""properties"": {},
-    ""required"": []
-}";
+            ""type"": ""object"",
+            ""properties"": {},
+            ""required"": []
+        }";
         public string Type => "output";
         public string CanUse => "free";
         public bool Tool => true;

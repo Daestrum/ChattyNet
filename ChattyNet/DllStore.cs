@@ -57,6 +57,10 @@ namespace ChattyNet
         public bool LiveIsDirty => LiveDllStore.Values.Any(e => e.Dirty);
         public bool ReserveIsDirty => ReserveDllStore.Values.Any(e => e.Dirty);
 
+        private string _lastToolSpecJson = "";
+        private string _cachedToolSpecJson = "";
+
+
         Dictionary<string, LiveDllEntry> LiveDllStore = new();
         Dictionary<string, ReserveDllEntry> ReserveDllStore = new();
 
@@ -64,7 +68,7 @@ namespace ChattyNet
         {
             
         }
-        public void ReadAllTools(string folder)
+/*        public void ReadAllTools(string folder)
         {
             foreach (var path in Directory.GetFiles(folder, "*.dll"))
             {
@@ -92,7 +96,8 @@ namespace ChattyNet
                     };
                 }
             }
-        }
+        }*/
+
         public void ApplyChanges(RefreshBatch batch)
         {
             bool anyChanges = false;
@@ -106,30 +111,40 @@ namespace ChattyNet
                 anyChanges = true;
                 BuildDllChain(name);              // loads assembly, creates instance, etc.
             }
-            
+
             // 2. Handle UPDATED tools
             foreach (var name in batch.UpdatedTools)
             {
                 Logger.Write($"  UPDATED: {name}");
-                ReadDllFromDisk(name);          // overwrite bytes + timestamp
+                ReadDllFromDisk(name);
                 MarkEntry(name, ChangeFlag.Modified);
+                BuildDllChain(name);   // <-- ADD THIS
                 anyChanges = true;
             }
+
 
             // 3. Handle REMOVED tools
             foreach (var name in batch.RemovedTools)
             {
                 Logger.Write($"  REMOVED: {name}");
-                MarkEntry(name, ChangeFlag.Removed);
+                LiveDllStore.Remove(name);   // <-- REMOVE IT
                 anyChanges = true;
             }
+
 
             // 4. Debug dump only if something changed
             if (anyChanges)
                 debugToolStore();
-            
-            
-            Logger.Write("\n\nToolSpec: " + GetNewToolSchema());
+
+
+            string newSpec = GetNewToolSchema();
+
+            if (newSpec != _lastToolSpecJson)
+            {
+                Logger.Write("\n\nToolSpec: " + newSpec);
+                _lastToolSpecJson = newSpec;
+            }
+
         }
 
         public void ReadDllFromDisk(string name)
@@ -180,7 +195,15 @@ namespace ChattyNet
 
             // 2. Find the tool type
             var toolType = asm.GetTypes()
-                .FirstOrDefault(t => t.GetProperty("Name") != null);
+                .FirstOrDefault(t =>
+                    t.IsClass &&
+                    !t.IsAbstract &&
+                    t.GetProperty("Name") != null &&
+                    t.GetProperty("Description") != null &&
+                    t.GetProperty("Schema") != null &&
+                    t.GetProperty("Type") != null &&
+                    t.GetProperty("CanUse") != null);
+
 
             if (toolType == null)
                 throw new Exception($"No tool type found in {name}");
@@ -200,7 +223,8 @@ namespace ChattyNet
         {
             var list = new List<object>();
 
-            foreach (var entry in LiveDllStore.Values)
+            foreach (var entry in LiveDllStore.OrderBy(k => k.Key).Select(k => k.Value))
+
             {
                 if (entry.Instance == null)
                     continue;
