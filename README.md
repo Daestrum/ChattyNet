@@ -9,3 +9,8 @@ Each tool enforces its own limits and behaviour
 The host doesn’t need to know anything about a tool in advance
 
 This creates a plug‑and‑play tool ecosystem where the AI can discover, validate, and call tools at runtime.
+
+Expanding the tool store so tools are all read in to memory and are loaded and swapped there.
+ There will be a Live and Reserve set of tools, a simple Swap( ToolA, ToolB) will unload the DLL for A, and swap in ToolB DLL.
+ No tools are 'lost' if they go from live to reserve, they dont need to be read from disk again.
+ Other commands will be Demote  Live -> Reserve. Promote Reserve -> live, with oldest tool/least used auto demoted.
