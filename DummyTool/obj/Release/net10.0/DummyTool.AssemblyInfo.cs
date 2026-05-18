@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DummyTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+367a8c0b90de28f89deac6dec6118cd98e141935")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5babdfee3e8d0d0fbeee2569e8f4d4de958b8e78")]
 [assembly: System.Reflection.AssemblyProductAttribute("DummyTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DummyTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,0 +1,13 @@
+C:\chatty_net\Chatty.Shared\bin\Release\net10.0\Chatty.Shared.deps.json
+C:\chatty_net\Chatty.Shared\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\Chatty.Shared\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\Chatty.Shared.csproj.AssemblyReference.cache
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\Chatty.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\Chatty.Shared.AssemblyInfoInputs.cache
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\Chatty.Shared.AssemblyInfo.cs
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\Chatty.Shared.csproj.CoreCompileInputs.cache
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\Chatty.Shared.sourcelink.json
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\refint\Chatty.Shared.dll
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\Chatty.Shared\obj\Release\net10.0\ref\Chatty.Shared.dll
