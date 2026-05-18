@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "c:\\chatty_net\\SqliteMemoryTool\\SqliteMemoryTool.csproj": {}
+    "C:\\chatty_net\\SqliteMemoryTool\\SqliteMemoryTool.csproj": {}
   },
   "projects": {
     "C:\\chatty_net\\Chatty.Shared\\Chatty.Shared.csproj": {
@@ -347,14 +347,14 @@
         }
       }
     },
-    "c:\\chatty_net\\SqliteMemoryTool\\SqliteMemoryTool.csproj": {
+    "C:\\chatty_net\\SqliteMemoryTool\\SqliteMemoryTool.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\chatty_net\\SqliteMemoryTool\\SqliteMemoryTool.csproj",
+        "projectUniqueName": "C:\\chatty_net\\SqliteMemoryTool\\SqliteMemoryTool.csproj",
         "projectName": "SqliteMemoryTool",
-        "projectPath": "c:\\chatty_net\\SqliteMemoryTool\\SqliteMemoryTool.csproj",
+        "projectPath": "C:\\chatty_net\\SqliteMemoryTool\\SqliteMemoryTool.csproj",
         "packagesPath": "C:\\Users\\green\\.nuget\\packages\\",
-        "outputPath": "c:\\chatty_net\\SqliteMemoryTool\\obj\\",
+        "outputPath": "C:\\chatty_net\\SqliteMemoryTool\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\green\\AppData\\Roaming\\NuGet\\NuGet.Config",

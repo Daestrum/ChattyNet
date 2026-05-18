@@ -1,6 +1,6 @@
 <Solution>
   <Project Path="../Chatty.Shared/Chatty.Shared.csproj" Id="0431f915-21da-4d67-b5b9-f1f9eb63cbf8" />
-  <Project Path="../date_tool/DateTool.csproj" Id="b3f1dacd-78e0-4b09-afc0-868648352f60" />
+  <Project Path="../DateTool/DateTool.csproj" />
   <Project Path="../DummyTool/DummyTool.csproj" Id="91ea8735-8785-460e-a4b8-7c7df88d51e9" />
   <Project Path="../SqliteMemoryTool/SqliteMemoryTool.csproj" Id="ec388bbc-d37f-4f2a-bb9f-81a81762a154" />
   <Project Path="../TimeTool/TimeTool.csproj" />

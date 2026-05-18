@@ -1,0 +1,12 @@
+C:\chatty_net\DateTool\bin\Release\net10.0\DateTool.deps.json
+C:\chatty_net\DateTool\bin\Release\net10.0\DateTool.dll
+C:\chatty_net\DateTool\bin\Release\net10.0\DateTool.pdb
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.GeneratedMSBuildEditorConfig.editorconfig
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.AssemblyInfoInputs.cache
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.AssemblyInfo.cs
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.csproj.CoreCompileInputs.cache
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.sourcelink.json
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.dll
+C:\chatty_net\DateTool\obj\Release\net10.0\refint\DateTool.dll
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.pdb
+C:\chatty_net\DateTool\obj\Release\net10.0\ref\DateTool.dll

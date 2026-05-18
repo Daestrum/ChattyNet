@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TimeTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7fc844908a18b2c9d02f25b2a23efb01e4ee6ac1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+700c83c4d7873c18a1971668a9f28f1d5105f26e")]
 [assembly: System.Reflection.AssemblyProductAttribute("TimeTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TimeTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

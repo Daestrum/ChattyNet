@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\chatty_net\\TimeTool\\TimeTool.csproj": {}
+    "C:\\chatty_net\\TimeTool\\TimeTool.csproj": {}
   },
   "projects": {
-    "c:\\chatty_net\\TimeTool\\TimeTool.csproj": {
+    "C:\\chatty_net\\TimeTool\\TimeTool.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\chatty_net\\TimeTool\\TimeTool.csproj",
+        "projectUniqueName": "C:\\chatty_net\\TimeTool\\TimeTool.csproj",
         "projectName": "TimeTool",
-        "projectPath": "c:\\chatty_net\\TimeTool\\TimeTool.csproj",
+        "projectPath": "C:\\chatty_net\\TimeTool\\TimeTool.csproj",
         "packagesPath": "C:\\Users\\green\\.nuget\\packages\\",
-        "outputPath": "c:\\chatty_net\\TimeTool\\obj\\",
+        "outputPath": "C:\\chatty_net\\TimeTool\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\green\\AppData\\Roaming\\NuGet\\NuGet.Config",

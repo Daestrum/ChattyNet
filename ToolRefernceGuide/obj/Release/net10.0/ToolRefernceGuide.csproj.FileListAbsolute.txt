@@ -1,0 +1,12 @@
+C:\chatty_net\ToolRefernceGuide\bin\Release\net10.0\ToolRefernceGuide.deps.json
+C:\chatty_net\ToolRefernceGuide\bin\Release\net10.0\ToolRefernceGuide.dll
+C:\chatty_net\ToolRefernceGuide\bin\Release\net10.0\ToolRefernceGuide.pdb
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.GeneratedMSBuildEditorConfig.editorconfig
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.AssemblyInfoInputs.cache
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.AssemblyInfo.cs
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.csproj.CoreCompileInputs.cache
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.sourcelink.json
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.dll
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\refint\ToolRefernceGuide.dll
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ToolRefernceGuide.pdb
+C:\chatty_net\ToolRefernceGuide\obj\Release\net10.0\ref\ToolRefernceGuide.dll

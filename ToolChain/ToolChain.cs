@@ -5,7 +5,7 @@ namespace ToolChain
     public class ToolChain
     {
         public string Name => "chain_tools";
-        public string Description => "Allows chaining of tool calls into one call. Only testing for now - will not run tools";
+        public string Description => "Allows chaining of tool calls into one call. The result will be a sequential list of tool replies in order of call";
         public string Schema => @"
 {
   ""type"": ""object"",

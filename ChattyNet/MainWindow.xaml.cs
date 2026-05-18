@@ -271,7 +271,7 @@ namespace ChattyNet
 
                 foreach (var step in steps.EnumerateArray())
                 {
-                    string toolName = step.GetProperty("tool").GetString();
+                    string toolName = step.GetProperty("tool_name").GetString();
                     string toolArgs = step.GetProperty("args").GetRawText();
 
                     // 1. Find the tool instance using your helper
@@ -372,46 +372,7 @@ namespace ChattyNet
         }
 
 
- /*       private List<object> BuildToolSpecs(List<object> visibleTools)
-        {
-            var list = new List<object>();
-
-            foreach (var tool in visibleTools)
-            {
-                var name = tool.GetType().GetProperty("Name")?.GetValue(tool)?.ToString();
-                var desc = tool.GetType().GetProperty("Description")?.GetValue(tool)?.ToString();
-                var schemaStr = tool.GetType().GetProperty("Schema")?.GetValue(tool)?.ToString();
-
-                Dictionary<string, object> schemaObj;
-
-                // If schema is empty or "{}", replace with valid OpenAI schema
-                if (string.IsNullOrWhiteSpace(schemaStr) || schemaStr.Trim() == "{}")
-                {
-                    schemaObj = new Dictionary<string, object>
-                    {
-                        ["type"] = "object",
-                        ["properties"] = new Dictionary<string, object>()
-                    };
-                }
-                else
-                {
-                    schemaObj = JsonSerializer.Deserialize<Dictionary<string, object>>(schemaStr);
-                }
-
-                list.Add(new
-                {
-                    type = "function",
-                    function = new
-                    {
-                        name = name,
-                        description = desc,
-                        parameters = schemaObj
-                    }
-                });
-            }
-
-            return list;
-        }*/
+ 
 
         private void LogToolCall(string chatId, string toolName, string argsJson)
         {

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\chatty_net\\DateTool\\DateTool.csproj": {}
+    "C:\\chatty_net\\DateTool\\DateTool.csproj": {}
   },
   "projects": {
-    "c:\\chatty_net\\DateTool\\DateTool.csproj": {
+    "C:\\chatty_net\\DateTool\\DateTool.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\chatty_net\\DateTool\\DateTool.csproj",
+        "projectUniqueName": "C:\\chatty_net\\DateTool\\DateTool.csproj",
         "projectName": "DateTool",
-        "projectPath": "c:\\chatty_net\\DateTool\\DateTool.csproj",
+        "projectPath": "C:\\chatty_net\\DateTool\\DateTool.csproj",
         "packagesPath": "C:\\Users\\green\\.nuget\\packages\\",
-        "outputPath": "c:\\chatty_net\\DateTool\\obj\\",
+        "outputPath": "C:\\chatty_net\\DateTool\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\green\\AppData\\Roaming\\NuGet\\NuGet.Config",
