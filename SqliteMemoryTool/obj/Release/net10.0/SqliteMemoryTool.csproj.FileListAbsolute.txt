@@ -1,0 +1,16 @@
+C:\chatty_net\SqliteMemoryTool\bin\Release\net10.0\SqliteMemoryTool.deps.json
+C:\chatty_net\SqliteMemoryTool\bin\Release\net10.0\SqliteMemoryTool.dll
+C:\chatty_net\SqliteMemoryTool\bin\Release\net10.0\SqliteMemoryTool.pdb
+C:\chatty_net\SqliteMemoryTool\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\SqliteMemoryTool\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMemoryTool.csproj.AssemblyReference.cache
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMemoryTool.GeneratedMSBuildEditorConfig.editorconfig
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMemoryTool.AssemblyInfoInputs.cache
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMemoryTool.AssemblyInfo.cs
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMemoryTool.csproj.CoreCompileInputs.cache
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMemoryTool.sourcelink.json
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMe.B27335C9.Up2Date
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMemoryTool.dll
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\refint\SqliteMemoryTool.dll
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\SqliteMemoryTool.pdb
+C:\chatty_net\SqliteMemoryTool\obj\Release\net10.0\ref\SqliteMemoryTool.dll

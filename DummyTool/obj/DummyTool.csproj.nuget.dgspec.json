@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\chatty_net\\DummyTool\\DummyTool.csproj": {}
+    "C:\\chatty_net\\DummyTool\\DummyTool.csproj": {}
   },
   "projects": {
-    "c:\\chatty_net\\DummyTool\\DummyTool.csproj": {
+    "C:\\chatty_net\\DummyTool\\DummyTool.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\chatty_net\\DummyTool\\DummyTool.csproj",
+        "projectUniqueName": "C:\\chatty_net\\DummyTool\\DummyTool.csproj",
         "projectName": "DummyTool",
-        "projectPath": "c:\\chatty_net\\DummyTool\\DummyTool.csproj",
+        "projectPath": "C:\\chatty_net\\DummyTool\\DummyTool.csproj",
         "packagesPath": "C:\\Users\\green\\.nuget\\packages\\",
-        "outputPath": "c:\\chatty_net\\DummyTool\\obj\\",
+        "outputPath": "C:\\chatty_net\\DummyTool\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\green\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\chatty_net\\ToolChain\\ToolChain.csproj": {}
+    "C:\\chatty_net\\ToolChain\\ToolChain.csproj": {}
   },
   "projects": {
-    "c:\\chatty_net\\ToolChain\\ToolChain.csproj": {
+    "C:\\chatty_net\\ToolChain\\ToolChain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\chatty_net\\ToolChain\\ToolChain.csproj",
+        "projectUniqueName": "C:\\chatty_net\\ToolChain\\ToolChain.csproj",
         "projectName": "ToolChain",
-        "projectPath": "c:\\chatty_net\\ToolChain\\ToolChain.csproj",
+        "projectPath": "C:\\chatty_net\\ToolChain\\ToolChain.csproj",
         "packagesPath": "C:\\Users\\green\\.nuget\\packages\\",
-        "outputPath": "c:\\chatty_net\\ToolChain\\obj\\",
+        "outputPath": "C:\\chatty_net\\ToolChain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\green\\AppData\\Roaming\\NuGet\\NuGet.Config",

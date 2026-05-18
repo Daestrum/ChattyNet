@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\chatty_net\\WebToolRead\\WebToolRead.csproj": {}
+    "C:\\chatty_net\\WebToolRead\\WebToolRead.csproj": {}
   },
   "projects": {
-    "c:\\chatty_net\\WebToolRead\\WebToolRead.csproj": {
+    "C:\\chatty_net\\WebToolRead\\WebToolRead.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\chatty_net\\WebToolRead\\WebToolRead.csproj",
+        "projectUniqueName": "C:\\chatty_net\\WebToolRead\\WebToolRead.csproj",
         "projectName": "WebToolRead",
-        "projectPath": "c:\\chatty_net\\WebToolRead\\WebToolRead.csproj",
+        "projectPath": "C:\\chatty_net\\WebToolRead\\WebToolRead.csproj",
         "packagesPath": "C:\\Users\\green\\.nuget\\packages\\",
-        "outputPath": "c:\\chatty_net\\WebToolRead\\obj\\",
+        "outputPath": "C:\\chatty_net\\WebToolRead\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\green\\AppData\\Roaming\\NuGet\\NuGet.Config",

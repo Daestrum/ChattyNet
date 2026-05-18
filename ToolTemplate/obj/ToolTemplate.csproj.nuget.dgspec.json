@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\chatty_net\\ToolTemplate\\ToolTemplate.csproj": {}
+    "C:\\chatty_net\\ToolTemplate\\ToolTemplate.csproj": {}
   },
   "projects": {
-    "c:\\chatty_net\\ToolTemplate\\ToolTemplate.csproj": {
+    "C:\\chatty_net\\ToolTemplate\\ToolTemplate.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\chatty_net\\ToolTemplate\\ToolTemplate.csproj",
+        "projectUniqueName": "C:\\chatty_net\\ToolTemplate\\ToolTemplate.csproj",
         "projectName": "ToolTemplate",
-        "projectPath": "c:\\chatty_net\\ToolTemplate\\ToolTemplate.csproj",
+        "projectPath": "C:\\chatty_net\\ToolTemplate\\ToolTemplate.csproj",
         "packagesPath": "C:\\Users\\green\\.nuget\\packages\\",
-        "outputPath": "c:\\chatty_net\\ToolTemplate\\obj\\",
+        "outputPath": "C:\\chatty_net\\ToolTemplate\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\green\\AppData\\Roaming\\NuGet\\NuGet.Config",
