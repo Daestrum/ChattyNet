@@ -1,44 +1,51 @@
 ﻿<Window x:Class="ChattyNet.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ChattyNet"
-        mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <!-- Model selector -->
+            <RowDefinition Height="*"/>
+            <!-- Output -->
+            <RowDefinition Height="Auto"/>
+            <!-- Input -->
         </Grid.RowDefinitions>
+
+        <!-- Model selector -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <RadioButton Content="Nemo" Tag="nvidia/nemotron-3-nano-omni" GroupName="Models" Margin="0,0,10,0"  Checked="ModelRadio_Checked"/>
+            <RadioButton Content="Gemma 4" Tag="google/gemma-4-e4b" GroupName="Models" Margin="0,0,10,0"  Checked="ModelRadio_Checked"/>
+            <RadioButton Content="DevStarL" Tag="mistralai/devstral-small-2-2512" GroupName="Models" Margin="0,0,10,0"  Checked="ModelRadio_Checked"/>
+            <RadioButton Content="Qwen 3.6" Tag="qwen/qwen3.6-35b-a3b" GroupName="Models" Margin="0,0,10,0"  Checked="ModelRadio_Checked"/>
+            <Button Content="Connect" Width="100" Margin="20,0,0,0"/>
+        </StackPanel>
 
         <!-- Output box -->
         <TextBox x:Name="OutputBox"
-             Grid.Row="0"
-             Margin="0,0,0,10"
-             TextWrapping="Wrap"
-             VerticalScrollBarVisibility="Auto"
-             IsReadOnly="True"
-             AcceptsReturn="True" />
+                 Grid.Row="1"
+                 Margin="0,0,0,10"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 IsReadOnly="True"
+                 AcceptsReturn="True" />
 
-        <!-- Input + Send button -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <TextBox
-                x:Name="InputBox"
-                FontSize="18"
-                AcceptsReturn="True"
-                TextWrapping="Wrap"
-                VerticalScrollBarVisibility="Auto"
-                ContextMenuOpening="InputBox_ContextMenuOpening"
-                Width="680"
-                Height="100" />
-            
+        <!-- Input + Send -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <TextBox x:Name="InputBox"
+                     FontSize="18"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     Width="680"
+                     Height="100" />
+
             <Button x:Name="SendButton"
-                Width="100"
-                Height="100"
-                Content="Send"
-                Click="SendButton_Click" />
+                    Width="100"
+                    Height="100"
+                    Content="Send"
+                    Click="SendButton_Click" />
         </StackPanel>
     </Grid>
-
 </Window>

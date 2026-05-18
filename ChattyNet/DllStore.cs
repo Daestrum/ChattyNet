@@ -17,7 +17,7 @@ namespace ChattyNet
     {
         public static DLLStore Instance { get; } = new DLLStore();
 
-        class LiveDllEntry
+        public class LiveDllEntry
         {
             public byte[] Bytes { get; set; }
             public DateTime Timestamp { get; set; }
@@ -28,7 +28,7 @@ namespace ChattyNet
             public ChangeFlag flag { get; set; }  // New, Modified, Removed, None
             public bool Dirty { get; internal set; }
         }
-        class ReserveDllEntry
+        public class ReserveDllEntry
         {
             public byte[] Bytes { get; set; }
             public DateTime Timestamp { get; set; }
@@ -75,12 +75,16 @@ namespace ChattyNet
         public bool LiveIsDirty => LiveDllStore.Values.Any(e => e.Dirty);
         public bool ReserveIsDirty => ReserveDllStore.Values.Any(e => e.Dirty);
 
+        public Dictionary<string, string> DllNameToToolName = new();
+        public Dictionary<string, string> ToolNameToDllName = new();
+
+
         public string _lastToolSpecJson = "";
         private string _cachedToolSpecJson = "";
 
 
-        Dictionary<string, LiveDllEntry> LiveDllStore = new();
-        Dictionary<string, ReserveDllEntry> ReserveDllStore = new();
+        public Dictionary<string, LiveDllEntry> LiveDllStore = new();
+        public Dictionary<string, ReserveDllEntry> ReserveDllStore = new();
 
         public DLLStore()
         {
@@ -198,6 +202,32 @@ namespace ChattyNet
             batch.NewTools.Clear();
             batch.UpdatedTools.Clear();
             batch.RemovedTools.Clear();
+
+            if (anyChanges)
+            {
+                foreach (var kvp in LiveDllStore)
+                {
+                    var dllName = kvp.Key;
+                    var entry = kvp.Value;
+
+                    if (entry.Instance == null)
+                        continue;
+
+                    var inst = entry.Instance;
+                    var type = inst.GetType();
+
+                    string toolName = type.GetProperty("Name")?.GetValue(inst)?.ToString();
+
+                    if (!string.IsNullOrWhiteSpace(toolName))
+                    {
+                        DllNameToToolName[dllName] = toolName;
+                        ToolNameToDllName[toolName] = dllName;
+
+                        Logger.Write($"Map: DLL '{dllName}' → Tool '{toolName}'");
+                    }
+                }
+            }
+
         }
 
         public void ReadDllFromDisk(string name)

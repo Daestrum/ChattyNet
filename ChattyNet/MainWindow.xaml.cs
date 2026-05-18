@@ -45,11 +45,27 @@ namespace ChattyNet
             ToolRefresher.Initialize(toolFolder);
             ToolRefresher.Start();   // ← leave commented for now
 
-            //_tools = ToolLoader.LoadTools(toolFolder);
             _tools = new List<(object Instance, ToolLoadContext Context)>();
-            //DebugToolList("Startup");
+            DebugToolList("Startup");
         }
+        private void ConnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedModel == null)
+            {
+                OutputBox.AppendText("Pick a model first.\n");
+                return;
+            }
 
+            _llm = new LlmClient("http://192.168.0.44:1234");
+
+            OutputBox.AppendText($"Connected using model: {_selectedModel}\n");
+
+            ToolRefresher.Initialize(toolFolder);
+            ToolRefresher.Start();   // ← leave commented for now
+
+         
+            _tools = new List<(object Instance, ToolLoadContext Context)>();
+        }
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
             var input = InputBox.Text.Trim();
@@ -94,6 +110,17 @@ namespace ChattyNet
             OutputBox.AppendText(text + "\n");
             OutputBox.ScrollToEnd();
         }
+        private string _selectedModel;
+
+        private void ModelRadio_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is RadioButton rb && rb.Tag is string modelId)
+            {
+                _selectedModel = modelId;
+                OutputBox.AppendText($"Selected model: {_selectedModel}\n");
+            }
+        }
+
         private async Task<string> ProcessMessageAsync(string userInput)
         {
             // Add user message to rolling buffer
@@ -101,7 +128,7 @@ namespace ChattyNet
 
             // Build context + visible tools
             var context = BuildContext();
-            var visibleTools = GetVisibleTools(userInput);
+            //var visibleTools = GetVisibleTools(userInput);
             //_toolSpecs = BuildToolSpecs(visibleTools);
             
             _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(DLLStore.Instance._lastToolSpecJson);
@@ -110,6 +137,11 @@ namespace ChattyNet
             var payload = new
             {
                 model = "nvidia/nemotron-3-nano-omni",
+                //model = _selectedModel ?? "nvidia/nemotron-3-nano-omni",
+                //model = "google/gemma-4-e4b",   // <===   Will not work with tool calls until we handle tool spec format differences (e.g. "function" vs "tool" wrapper, and "parameters" vs "args_schema")
+                //model = _selectedModel ?? "google/gemma-4-e4b",
+                //model = "mistralai/devstral-small-2-2512",
+                //model = "qwen/qwen3.6-35b-a3b",
                 messages = context,
                 tools = _toolSpecs
             };
@@ -169,6 +201,7 @@ namespace ChattyNet
 
                 // 🔵 LOG TOOL REPLY
                 LogToolReply(callId, result.ToString() ?? "{}");
+                //Logger.Write(JsonSerializer.Serialize(BuildContext(), new JsonSerializerOptions { WriteIndented = true }));
 
                 // Add tool result to buffer WITH ID
                 AddMessage("tool", result.ToString() ?? "{}", callId);
@@ -178,6 +211,8 @@ namespace ChattyNet
                 {
                     messages = BuildContext()
                 };
+                //OutputBox.AppendText("\n=== SECOND PASS CONTEXT ===\n");
+                //OutputBox.AppendText(JsonSerializer.Serialize(BuildContext(), new JsonSerializerOptions { WriteIndented = true }));
 
                 var doc2 = await _llm.ChatAsync(payload2);
 
@@ -274,7 +309,7 @@ namespace ChattyNet
 
             _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(DLLStore.Instance._lastToolSpecJson);
 
-            DebugToolList("AfterRefresh");
+            //DebugToolList("AfterRefresh");
 
             //ToolRefresher.Clear();
         }
@@ -299,7 +334,8 @@ namespace ChattyNet
                     ["content"] = content
                 });
             }
-            while (_messages.Count > 10)
+
+            while (_messages.Count > 20)
                 _messages.RemoveAt(0);
         }
 
@@ -317,16 +353,19 @@ namespace ChattyNet
             return list;
         }
 
-        private object? FindToolByName(string name)
+        private object? FindToolByName(string toolName)
         {
-            return _tools
-                    .Select(t => t.Instance)
-                    .FirstOrDefault(inst =>
-        inst.GetType().GetProperty("Name")?.GetValue(inst)?.ToString() == name);
+            if (!DLLStore.Instance.ToolNameToDllName.TryGetValue(toolName, out var dllName))
+                return null;
 
+            if (!DLLStore.Instance.LiveDllStore.TryGetValue(dllName, out var entry))
+                return null;
+
+            return entry.Instance;
         }
 
-        private List<object> BuildToolSpecs(List<object> visibleTools)
+
+ /*       private List<object> BuildToolSpecs(List<object> visibleTools)
         {
             var list = new List<object>();
 
@@ -365,7 +404,7 @@ namespace ChattyNet
             }
 
             return list;
-        }
+        }*/
 
         private void LogToolCall(string chatId, string toolName, string argsJson)
         {
