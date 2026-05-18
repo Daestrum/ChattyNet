@@ -189,10 +189,18 @@ namespace ChattyNet
 
                 // ⭐ SAFETY GUARD — prevent unload while tool is running
                 _isToolInUse = true;
+
                 try
                 {
-                    var runMethod = tool.GetType().GetMethod("Run");
-                    result = runMethod.Invoke(tool, new object[] { argsJson })?.ToString();
+                    if (toolName == "chain_tools")  
+                    {
+                        result = GoRunTheTools(argsJson);
+                    }
+                    else
+                    {
+                        var runMethod = tool.GetType().GetMethod("Run");
+                        result = runMethod.Invoke(tool, new object[] { argsJson })?.ToString();
+                    }
                 }
                 finally
                 {
@@ -238,70 +246,7 @@ namespace ChattyNet
                 ApplyRefresherChanges();
             return text;
         }
-        /*        private void ApplyRefresherChanges()
-                {
-                    if (_isToolInUse)
-                        return;
-
-                    // 1. Handle removed tools
-                    foreach (var removed in ToolRefresher.RemovedTools)
-                    {
-                        var entry = _tools.FirstOrDefault(t => t.Instance.GetType().Name == removed);
-                        if (entry.Instance != null)
-                        {
-                            entry.Context.Unload();
-                            _tools.Remove(entry);
-                        }
-
-                    }
-                    // 1b. Handle NEW tools
-                    foreach (var added in ToolRefresher.NewTools)
-                    {
-                        var newTools = ToolLoader.LoadTools(toolFolder);
-                        foreach (var t in newTools)
-                        {
-                            if (t.Instance.GetType().Name == added)
-                            {
-                                _tools.Add(t);
-                                Logger.Write($"[DEBUG] Added NEW tool: {added}");
-                            }
-                        }
-                    }
-
-
-                    // 2. Handle updated tools (remove + reload)
-                    foreach (var changed in ToolRefresher.UpdatedTools)
-                    {
-                        var entry = _tools.FirstOrDefault(t => t.Instance.GetType().Name == changed);
-                        if (entry.Instance != null)
-                        {
-                            entry.Context.Unload();
-                            _tools.Remove(entry);
-                        }
-
-                        // Reload using ToolLoader
-                        var newTools = ToolLoader.LoadTools(toolFolder);
-                        foreach (var t in newTools)
-                        {
-                            if (t.Instance.GetType().Name == changed)
-                                _tools.Add(t);
-                        }
-                    }
-
-                    // 3. Rebuild schema
-                    _toolSpecs = BuildToolSpecs(GetVisibleTools(""));
-
-                    OutputBox.AppendText("tool count = " + _toolSpecs.Count);
-
-                    DebugToolList("AfterRefresh");
-
-                    _tools = ToolLoader.LoadTools(toolFolder);
-                    Logger.Write($"[DEBUG] Reloaded tools, count = {_tools.Count}");
-
-                    ToolRefresher.NewTools.Clear();
-                    ToolRefresher.UpdatedTools.Clear();
-                    ToolRefresher.RemovedTools.Clear();
-                }*/
+ 
         private void ApplyRefresherChanges()
         {
             if (_isToolInUse)
@@ -312,6 +257,68 @@ namespace ChattyNet
             //DebugToolList("AfterRefresh");
 
             //ToolRefresher.Clear();
+        }
+        private string GoRunTheTools(string argsJson)
+        {
+            Logger.Write("GoRunTheTools called with args: " + argsJson);
+
+            var results = new List<object>();
+
+            try
+            {
+                var doc = JsonDocument.Parse(argsJson);
+                var steps = doc.RootElement.GetProperty("steps");
+
+                foreach (var step in steps.EnumerateArray())
+                {
+                    string toolName = step.GetProperty("tool").GetString();
+                    string toolArgs = step.GetProperty("args").GetRawText();
+
+                    // 1. Find the tool instance using your helper
+                    var toolInstance = FindToolByName(toolName);
+                    if (toolInstance == null)
+                    {
+                        results.Add(new
+                        {
+                            tool = toolName,
+                            error = "Tool not found"
+                        });
+                        continue;
+                    }
+
+                    // 2. Run the tool
+                    string toolResult;
+                    try
+                    {
+                        var runMethod = toolInstance.GetType().GetMethod("Run");
+                        toolResult = runMethod.Invoke(toolInstance, new object[] { toolArgs })?.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        toolResult = $"ERROR: {ex.Message}";
+                    }
+
+                    // 3. Add structured result
+                    results.Add(new
+                    {
+                        tool = toolName,
+                        args = JsonDocument.Parse(toolArgs).RootElement,
+                        result = toolResult
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                results.Add(new
+                {
+                    error = "Failed to run tool chain",
+                    details = ex.Message
+                });
+            }
+
+            // 4. Return structured JSON Nemo can reason with
+
+            return JsonSerializer.Serialize(results);
         }
 
 

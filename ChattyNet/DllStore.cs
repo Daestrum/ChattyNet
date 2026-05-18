@@ -86,41 +86,7 @@ namespace ChattyNet
         public Dictionary<string, LiveDllEntry> LiveDllStore = new();
         public Dictionary<string, ReserveDllEntry> ReserveDllStore = new();
 
-        public DLLStore()
-        {
-            
-        }
-        /*        public void ReadAllTools(string folder)
-                {
-                    foreach (var path in Directory.GetFiles(folder, "*.dll"))
-                    {
-                        // 1. Read bytes
-                        byte[] bytes = File.ReadAllBytes(path);
-                        // 2. Get timestamp
-                        DateTime ts = File.GetLastWriteTime(path);
-                        // 3. Extract real assembly name from bytes
-                        string name = GetAssemblyName(bytes);
-                        // 4. Store in LIVE or RESERVE depending on capacity
-                        if (LiveDllStore.Count < _maxLiveSize)
-                        {
-                            LiveDllStore[name] = new LiveDllEntry
-                            {
-                                Bytes = bytes,
-                                Timestamp = ts
-                            };
-                        }
-                        else
-                        {
-                            ReserveDllStore[name] = new ReserveDllEntry
-                            {
-                                Bytes = bytes,
-                                Timestamp = ts
-                            };
-                        }
-                    }
-                }*/
-
-        public List<object> ConvertSchemaToToolList(string schemaJson)
+         public List<object> ConvertSchemaToToolList(string schemaJson)
         {
             var schema = JsonSerializer.Deserialize<List<ToolSchema>>(schemaJson)
                          ?? new List<ToolSchema>();
