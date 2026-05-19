@@ -1,4 +1,5 @@
-﻿using ChattyNet;
+﻿using Chatty.Shared;
+using ChattyNet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,8 +23,8 @@ namespace ChattyNet
             public byte[] Bytes { get; set; }
             public DateTime Timestamp { get; set; }
             public string Name { get; set; }
-            public object Alc { get; set; }
-            public object Assembly { get; set; }
+            public AssemblyLoadContext Alc { get; set; }
+            public Assembly Assembly { get; set; }
             public object Instance { get; set; }
             public ChangeFlag flag { get; set; }  // New, Modified, Removed, None
             public bool Dirty { get; internal set; }
@@ -137,18 +138,52 @@ namespace ChattyNet
             foreach (var name in batch.UpdatedTools)
             {
                 Logger.Write($"  UPDATED: {name}");
+
+                // 1. Unload old ALC if present
+                if (LiveDllStore.TryGetValue(name, out var live))
+                {
+                    try
+                    {
+                        live.Alc?.Unload();
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
+                    catch { }
+                }
+
+                // 2. Remove old live entry
+                LiveDllStore.Remove(name);
+
+                // 3. DO NOT delete from DB (updates reuse DB entry)
+
+                // 4. Load new bytes (DB-aware)
                 ReadDllFromDisk(name);
+
+                // 5. Mark as modified
                 MarkEntry(name, ChangeFlag.Modified);
-                BuildDllChain(name);   // <-- ADD THIS
+
+                // 6. Rebuild chain (loads assembly)
+                BuildDllChain(name);
+
                 anyChanges = true;
             }
-
 
             // 3. Handle REMOVED tools
             foreach (var name in batch.RemovedTools)
             {
                 Logger.Write($"  REMOVED: {name}");
+                if (LiveDllStore.TryGetValue(name, out var live))
+                {
+                    try
+                    {
+                        live.Alc?.Unload();
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
+                    catch { }
+                }
                 LiveDllStore.Remove(name);   // <-- REMOVE IT
+                DBDllStore.Delete(name);          // <-- DELETE FROM DB
                 anyChanges = true;
             }
 
@@ -196,20 +231,125 @@ namespace ChattyNet
 
         }
 
+        /*        public void ReadDllFromDisk(string name)
+                {
+                    if (!LiveDllStore.ContainsKey(name))
+                    {
+                        LiveDllStore[name] = new LiveDllEntry
+                        {
+                            Name = name,
+                            Timestamp = GetRealTimestamp(name),
+                            Bytes = GetRealBytes(name),
+                            flag = ChangeFlag.None,
+                            Dirty = false
+                        };
+                    }
+                }*/
+        /*        public void ReadDllFromDisk(string name)
+                {
+                    if (!LiveDllStore.ContainsKey(name))
+                    {
+                        var bytes = GetRealBytes(name);
+                        var ts = GetRealTimestamp(name);
+
+                        // 1. Add to LiveDllStore (existing behaviour)
+                        LiveDllStore[name] = new LiveDllEntry
+                        {
+                            Name = name,
+                            Timestamp = ts,
+                            Bytes = bytes,
+                            flag = ChangeFlag.None,
+                            Dirty = false
+                        };
+
+                        // 2. Add to DBDllStore (new behaviour)
+                        var entry = new DllDbEntry
+                        {
+                            Name = name,
+                            Bytes = bytes,
+                            Timestamp = ts,
+                            Description = "",
+
+                            IsLive = true,
+                            IsCore = false,          // you can override this later
+                            ChangeFlag = "None",
+                            Dirty = false,
+
+                            LoadCount = 0,
+                            LastLoaded = null
+                        };
+
+                        DBDllStore.Save(entry);
+                    }
+                    Logger.Write("\nDB: " + string.Join(", ", DBDllStore.ListNames()));
+                }*/
+
         public void ReadDllFromDisk(string name)
         {
             if (!LiveDllStore.ContainsKey(name))
             {
+                // 1. Get timestamp from disk
+                var diskTs = GetRealTimestamp(name);
+
+                byte[] bytes;
+
+                // 2. Try DB first
+                var db = DBDllStore.GetBytesAndTimestamp(name);
+
+                if (db != null)
+                {
+                    var (dbBytes, dbTs) = db.Value;
+
+                    if (dbTs == diskTs)
+                    {
+                        // MATCH → use DB bytes
+                        Logger.Write($"Using cached DB bytes for {name}");
+                        bytes = dbBytes;
+                    }
+                    else
+                    {
+                        // MISMATCH → read real bytes
+                        Logger.Write($"Timestamp changed for {name}, reading real bytes");
+                        bytes = GetRealBytes(name);
+                    }
+                }
+                else
+                {
+                    // NOT IN DB → read real bytes
+                    Logger.Write($"No DB entry for {name}, reading real bytes");
+                    bytes = GetRealBytes(name);
+                }
+
+                // 3. Add to LiveDllStore
                 LiveDllStore[name] = new LiveDllEntry
                 {
                     Name = name,
-                    Timestamp = GetRealTimestamp(name),
-                    Bytes = GetRealBytes(name),
+                    Timestamp = diskTs,
+                    Bytes = bytes,
                     flag = ChangeFlag.None,
                     Dirty = false
                 };
+
+                // 4. Save/update DB
+                DBDllStore.Save(new DllDbEntry
+                {
+                    Name = name,
+                    Bytes = bytes,
+                    Timestamp = diskTs,
+                    Description = "",
+                    IsLive = true,
+                    IsCore = false,
+                    ChangeFlag = "None",
+                    Dirty = false,
+                    LoadCount = 0,
+                    LastLoaded = null
+                });
             }
+
+            Logger.Write("\nDB: " + string.Join(", ", DBDllStore.ListNames()));
         }
+
+
         private DateTime GetRealTimestamp(string dllName)
         {
             var path = Path.Combine(ToolRefresher._folder, dllName+".dll");

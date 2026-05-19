@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Chatty.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+700c83c4d7873c18a1971668a9f28f1d5105f26e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+65b64e25147b460b3a5e65aa39387b49bcc1ef9a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Chatty.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Chatty.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Chatty.Shared;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -35,7 +36,11 @@ namespace ChattyNet
         {
             Instance = this;
             InitializeComponent();
-            
+
+            // fire up dll db store
+            var dllDbPath = System.IO.Path.Combine("C:/Temp", "dll_store.db");
+            DBDllStore.Initialize($"Data Source={dllDbPath};Version=3;");
+
             OutputBox.FontSize = 18;
             InputBox.FontSize = 18;
 
@@ -254,9 +259,6 @@ namespace ChattyNet
 
             _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(DLLStore.Instance._lastToolSpecJson);
 
-            //DebugToolList("AfterRefresh");
-
-            //ToolRefresher.Clear();
         }
         private string GoRunTheTools(string argsJson)
         {
