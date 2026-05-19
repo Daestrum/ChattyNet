@@ -1,47 +1,111 @@
-C# tool framework for AI.  
-Tools self‑describe their capabilities, inputs, and usage limits so an AI can reason about them without any hard‑coded knowledge in the host.
+ChattyNet – C# Tool Framework for AI (Updated Architecture)
 
-Key Features
-Self‑describing tools  
-Each tool declares its own schema, description, usage rules (free, restricted, etc.), and type.
-The AI reads this metadata directly from the DLL at runtime.
+ChattyNet is a lightweight, high‑performance C# tool framework that allows AI models to discover, understand, and execute tools at runtime.
+Tools are self‑describing, dynamically loaded, hot‑swappable, and stored entirely in memory for maximum speed.
 
-Dynamic loading  
-Tools are loaded dynamically as DLLs.
-The host never loads DLLs from disk directly — it reads the bytes and loads them into a collectible AssemblyLoadContext, avoiding file locks and enabling hot‑swap.
+Self‑Describing Tools
+Each tool DLL declares its own:
 
-Tool autonomy  
-Each tool enforces its own limits and behaviour.
-The host doesn’t need to know anything about a tool in advance.
+schema
 
-Plug‑and‑play ecosystem  
-Tools can be added, updated, or removed simply by changing the DLLs in the tools folder.
-The AI discovers, validates, and calls tools at runtime.
+parameters
 
-Live & Reserve Stores
-Tools are stored entirely in memory:
+description
 
-Live store  
-Contains active tools with fully built DLL chains (bytes → ALC → assembly → instance).
+usage rules (free, restricted, etc.)
 
-Reserve store  
-Holds inactive tools that have been demoted or swapped out.
-Tools in Reserve remain in memory and can be promoted instantly without re‑reading from disk.
+type (output, action, chain, etc.)
+
+The host has no hard‑coded knowledge of any tool.
+The AI reads the metadata directly from the DLL at runtime.
+
+Dynamic Loading (No File Locks)
+Tools are never loaded from disk directly.
+
+Instead:
+
+The host reads the DLL bytes
+
+Loads them into a collectible AssemblyLoadContext (ALC)
+
+Builds a full “DLL chain”:
+bytes → ALC → assembly → instance → metadata
+
+This avoids file locks and enables true hot‑swap.
+
+Database‑Backed Tool Store
+All tool DLLs are cached in a SQLite database:
+
+DLL bytes
+
+timestamps
+
+metadata
+
+On startup, tools load from the DB, not from disk.
+Disk is only used when a tool is new or updated.
+
+This makes startup extremely fast.
+
+Live & Reserve Stores (Memory‑Resident Tools)
+All tools live entirely in memory.
+
+Live Store
+Contains active tools with:
+
+DLL bytes
+
+ALC
+
+assembly
+
+instance
+
+metadata
+
+These are the tools the AI can call.
+
+Reserve Store
+Contains inactive tools that have been demoted or swapped out.
+They remain fully loaded in memory and can be promoted instantly without disk or DB access.
 
 Hot‑Swap Logic
-Tools added to the folder are detected as New and loaded immediately.
+The tool folder is continuously monitored.
 
-Tools updated on disk are detected as Modified and reloaded.
+New
+A new DLL appears → load bytes → cache in DB → build chain → add to Live.
 
-Tools removed from the folder are detected as Removed and deleted from Live/Reserve.
+Modified
+Timestamp changes → unload old ALC → reload bytes → update DB → rebuild chain.
 
-If the Live store is full, the oldest or least‑used tool is automatically demoted to Reserve.
+Removed
+DLL disappears → unload ALC → remove from Live/Reserve → delete from DB.
 
-Manual Operations
-Demote(name) — Move a tool from Live → Reserve
+Auto‑Demotion
+If Live is full, the least‑used or oldest tool is demoted to Reserve.
 
-Promote(name) — Move a tool from Reserve → Live
+Manual Operations (not implemented yet)
+Demote(name) — Move tool from Live → Reserve
 
-Swap(A, B) — Swap two tools between Live and Reserve
+Promote(name) — Move tool from Reserve → Live
 
-This creates a flexible, memory‑resident tool ecosystem where tools can be swapped, updated, or removed at runtime without restarting the host or locking DLLs.
+Swap(A, B) — Exchange tools between Live and Reserve
+
+All operations are instant because tools are already in memory.
+
+Why This Matters
+This architecture creates a fully memory‑resident, hot‑swappable tool ecosystem where:
+
+tools can be added, updated, or removed at runtime
+
+no DLL is ever locked
+
+no restart is required
+
+the AI always sees the latest tool metadata
+
+updates are safe and leak‑free (ALCs are unloaded properly)
+
+startup is fast due to DB caching
+
+ChattyNet behaves like a miniature plugin engine designed specifically for AI tool use.
