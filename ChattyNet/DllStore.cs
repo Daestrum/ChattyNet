@@ -231,59 +231,6 @@ namespace ChattyNet
 
         }
 
-        /*        public void ReadDllFromDisk(string name)
-                {
-                    if (!LiveDllStore.ContainsKey(name))
-                    {
-                        LiveDllStore[name] = new LiveDllEntry
-                        {
-                            Name = name,
-                            Timestamp = GetRealTimestamp(name),
-                            Bytes = GetRealBytes(name),
-                            flag = ChangeFlag.None,
-                            Dirty = false
-                        };
-                    }
-                }*/
-        /*        public void ReadDllFromDisk(string name)
-                {
-                    if (!LiveDllStore.ContainsKey(name))
-                    {
-                        var bytes = GetRealBytes(name);
-                        var ts = GetRealTimestamp(name);
-
-                        // 1. Add to LiveDllStore (existing behaviour)
-                        LiveDllStore[name] = new LiveDllEntry
-                        {
-                            Name = name,
-                            Timestamp = ts,
-                            Bytes = bytes,
-                            flag = ChangeFlag.None,
-                            Dirty = false
-                        };
-
-                        // 2. Add to DBDllStore (new behaviour)
-                        var entry = new DllDbEntry
-                        {
-                            Name = name,
-                            Bytes = bytes,
-                            Timestamp = ts,
-                            Description = "",
-
-                            IsLive = true,
-                            IsCore = false,          // you can override this later
-                            ChangeFlag = "None",
-                            Dirty = false,
-
-                            LoadCount = 0,
-                            LastLoaded = null
-                        };
-
-                        DBDllStore.Save(entry);
-                    }
-                    Logger.Write("\nDB: " + string.Join(", ", DBDllStore.ListNames()));
-                }*/
-
         public void ReadDllFromDisk(string name)
         {
             if (!LiveDllStore.ContainsKey(name))

@@ -39,6 +39,7 @@ namespace ChattyNet
 
             // fire up dll db store
             var dllDbPath = System.IO.Path.Combine("C:/Temp", "dll_store.db");
+
             DBDllStore.Initialize($"Data Source={dllDbPath};Version=3;");
 
             OutputBox.FontSize = 18;
@@ -79,12 +80,76 @@ namespace ChattyNet
 
             AppendOutput($"You: {input}");
 
+            if (input.StartsWith("**"))
+            {
+                ProcessDirective(input);
+                OutputBox.AppendText("Directive processed.\n");
+                return;
+            }
+
             var response = await ProcessMessageAsync(input);
 
             AppendOutput($"ChattyNET: {response}");
 
             InputBox.Clear();
         }
+        void ProcessDirective(string directive)
+        {
+            var parts = directive.Substring(2).Split(' ', 2);
+            var command = parts[0].ToLower();
+            var argument = parts.Length > 1 ? parts[1] : "";
+
+            Logger.Write($"[DEBUG] Directive raw: '{directive}'\n");
+            Logger.Write($"[DEBUG] parts : '{parts[0]}'\n");
+            Logger.Write($"[DEBUG] command : '{command}'");
+
+
+            switch (command)
+            {
+                case "demote":
+                    if (argument!="")
+                    {
+                        DLLStore.Instance.Demote(argument.Trim());
+                    }
+                    break;
+
+                case "promote":
+                    if (argument!="")
+                    {
+                        DLLStore.Instance.Promote(argument.Trim());
+                    }
+                    break;
+
+                case "swap":
+                    var args = argument.Split(',', 2);
+                    if (args.Length == 2)
+                        DLLStore.Instance.Swap(args[0].Trim(), args[1].Trim());
+                    else
+                        OutputBox.AppendText("Usage: /swap ToolA,ToolB\n");
+                    break;
+
+                case "listtools":
+                    {
+                        var live = DBDllStore.GetLiveTools();
+                        OutputBox.AppendText("Live Tools:\n" + string.Join("\n", live) + "\n");
+                        break;
+                    }
+
+                case "reservetools":
+                    {
+                        var reserve = DBDllStore.GetReserveTools();
+                        OutputBox.AppendText("Reserve Tools:\n" + string.Join("\n", reserve) + "\n");
+                        break;
+                    }
+
+
+
+                default:
+                    OutputBox.AppendText($"Unknown directive: {command}\n");
+                    break;
+            }
+        }
+
         private void InputBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             if (InputBox.ContextMenu == null)

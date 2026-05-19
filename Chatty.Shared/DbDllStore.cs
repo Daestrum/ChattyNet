@@ -81,6 +81,43 @@ namespace Chatty.Shared
 
             cmd.ExecuteNonQuery();
         }
+        public static List<string> GetLiveTools()
+        {
+            var results = new List<string>();
+
+            using var conn = new SQLiteConnection(_connectionString);
+            conn.Open();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT name FROM dll_store WHERE is_live = 1 ORDER BY name;";
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                results.Add(reader.GetString(0));
+            }
+
+            return results;
+        }
+
+        public static List<string> GetReserveTools()
+        {
+            var results = new List<string>();
+
+            using var conn = new SQLiteConnection(_connectionString);
+            conn.Open();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT name FROM dll_store WHERE is_live = 0 ORDER BY name;";
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                results.Add(reader.GetString(0));
+            }
+
+            return results;
+        }
 
         public static bool Exists(string name)
         {
