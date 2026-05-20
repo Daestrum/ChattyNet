@@ -5,24 +5,26 @@ namespace ToolChain
     public class ToolChain
     {
         public string Name => "chain_tools";
-        public string Description => "Allows chaining of tool calls into one call. The result will be a sequential list of tool replies in order of call";
+        public string Description => @"
+Executes multiple tools in sequence. Each step has tool_name, args, and optional forward.
+Tools may return multiple named values. The number of returned values is specified by 'return_count' in the tool's schema, and the names of the returned values are specified by 'return_layout'.
+When a step has ""forward"": true, the chain runner exposes each returned value as a placeholder for the next step. For example, if a tool returns fields ""date"" and ""time"", the next step may reference them using ${date} and ${time}.
+Placeholder syntax IS allowed and is the correct way to pass values between steps.
+";
         public string Schema => @"
 {
   ""type"": ""object"",
   ""properties"": {
     ""steps"": {
       ""type"": ""array"",
-      ""description"": ""A list of tool calls to execute in order."",
       ""items"": {
         ""type"": ""object"",
         ""properties"": {
-          ""tool_name"": {
-            ""type"": ""string"",
-            ""description"": ""The name of the tool to call.""
-          },
-          ""args"": {
-            ""type"": ""object"",
-            ""description"": ""Arguments to pass to the tool.""
+          ""tool_name"": { ""type"": ""string"" },
+          ""args"": { ""type"": ""object"" },
+          ""forward"": {
+            ""type"": ""boolean"",
+              ""description"": ""If true, chain runner injects the previous step's raw result string into this step's args under the key 'input'. No placeholder syntax is used.""
           }
         },
         ""required"": [""tool_name"", ""args""]

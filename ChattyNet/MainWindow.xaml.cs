@@ -330,6 +330,7 @@ namespace ChattyNet
             Logger.Write("GoRunTheTools called with args: " + argsJson);
 
             var results = new List<object>();
+            string lastResult = null;
 
             try
             {
@@ -339,9 +340,22 @@ namespace ChattyNet
                 foreach (var step in steps.EnumerateArray())
                 {
                     string toolName = step.GetProperty("tool_name").GetString();
-                    string toolArgs = step.GetProperty("args").GetRawText();
+                    bool forward = step.TryGetProperty("forward", out var fwdProp) && fwdProp.GetBoolean();
 
-                    // 1. Find the tool instance using your helper
+                    // Parse args into a mutable dictionary
+                    var argsElement = step.GetProperty("args");
+                    var argsDict = JsonSerializer.Deserialize<Dictionary<string, object>>(argsElement.GetRawText())
+                                   ?? new Dictionary<string, object>();
+
+                    // Inject previous result if forward = true
+                    if (forward && lastResult != null)
+                    {
+                        argsDict["input"] = lastResult;
+                    }
+
+                    string toolArgsJson = JsonSerializer.Serialize(argsDict);
+
+                    // 1. Find the tool instance
                     var toolInstance = FindToolByName(toolName);
                     if (toolInstance == null)
                     {
@@ -358,18 +372,21 @@ namespace ChattyNet
                     try
                     {
                         var runMethod = toolInstance.GetType().GetMethod("Run");
-                        toolResult = runMethod.Invoke(toolInstance, new object[] { toolArgs })?.ToString();
+                        toolResult = runMethod.Invoke(toolInstance, new object[] { toolArgsJson })?.ToString();
                     }
                     catch (Exception ex)
                     {
                         toolResult = $"ERROR: {ex.Message}";
                     }
 
+                    // Save for forwarding
+                    lastResult = toolResult;
+
                     // 3. Add structured result
                     results.Add(new
                     {
                         tool = toolName,
-                        args = JsonDocument.Parse(toolArgs).RootElement,
+                        args = argsDict,
                         result = toolResult
                     });
                 }
@@ -384,10 +401,8 @@ namespace ChattyNet
             }
 
             // 4. Return structured JSON Nemo can reason with
-
             return JsonSerializer.Serialize(results);
         }
-
 
         private void AddMessage(string role, string content, string toolCallId = null)
         {

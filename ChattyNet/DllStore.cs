@@ -355,12 +355,52 @@ namespace ChattyNet
             Logger.Write("\nBuilt DLL chain for " + name);
         }
 
+        /*        public string GetNewToolSchema()
+                {
+                    var list = new List<object>();
+
+                    foreach (var entry in LiveDllStore.OrderBy(k => k.Key).Select(k => k.Value))
+
+                    {
+                        if (entry.Instance == null)
+                            continue;
+
+                        var inst = entry.Instance;
+                        var type = inst.GetType();
+
+                        string name = type.GetProperty("Name")?.GetValue(inst)?.ToString();
+                        string description = type.GetProperty("Description")?.GetValue(inst)?.ToString();
+                        string schemaJson = type.GetProperty("Schema")?.GetValue(inst)?.ToString();
+                        string toolType = type.GetProperty("Type")?.GetValue(inst)?.ToString();
+                        string canUse = type.GetProperty("CanUse")?.GetValue(inst)?.ToString();
+
+                        JsonElement parameters;
+                        try
+                        {
+                            parameters = JsonSerializer.Deserialize<JsonElement>(schemaJson);
+                        }
+                        catch
+                        {
+                            parameters = JsonDocument.Parse("{}").RootElement;
+                        }
+
+                        list.Add(new
+                        {
+                            name,
+                            description,
+                            parameters,
+                            canUse,
+                            type = toolType
+                        });
+                    }
+
+                    return JsonSerializer.Serialize(list); // compact one-line JSON
+                }*/
         public string GetNewToolSchema()
         {
-            var list = new List<object>();
+            var list = new List<Dictionary<string, object>>();
 
             foreach (var entry in LiveDllStore.OrderBy(k => k.Key).Select(k => k.Value))
-
             {
                 if (entry.Instance == null)
                     continue;
@@ -368,33 +408,43 @@ namespace ChattyNet
                 var inst = entry.Instance;
                 var type = inst.GetType();
 
-                string name = type.GetProperty("Name")?.GetValue(inst)?.ToString();
-                string description = type.GetProperty("Description")?.GetValue(inst)?.ToString();
-                string schemaJson = type.GetProperty("Schema")?.GetValue(inst)?.ToString();
-                string toolType = type.GetProperty("Type")?.GetValue(inst)?.ToString();
-                string canUse = type.GetProperty("CanUse")?.GetValue(inst)?.ToString();
+                // Standard header
+                var spec = new Dictionary<string, object>
+                {
+                    ["name"] = type.GetProperty("Name")?.GetValue(inst),
+                    ["description"] = type.GetProperty("Description")?.GetValue(inst),
+                    ["parameters"] = SafeParseJson(type.GetProperty("Schema")?.GetValue(inst)?.ToString()),
+                    ["canUse"] = type.GetProperty("CanUse")?.GetValue(inst),
+                    ["type"] = type.GetProperty("Type")?.GetValue(inst)
+                };
 
-                JsonElement parameters;
-                try
+                // Add ALL other public properties as optional extras
+                foreach (var prop in type.GetProperties())
                 {
-                    parameters = JsonSerializer.Deserialize<JsonElement>(schemaJson);
-                }
-                catch
-                {
-                    parameters = JsonDocument.Parse("{}").RootElement;
+                    if (!spec.ContainsKey(prop.Name))
+                    {
+                        var value = prop.GetValue(inst);
+                        if (value != null)
+                            spec[prop.Name] = value;
+                    }
                 }
 
-                list.Add(new
-                {
-                    name,
-                    description,
-                    parameters,
-                    canUse,
-                    type = toolType
-                });
+                list.Add(spec);
             }
 
-            return JsonSerializer.Serialize(list); // compact one-line JSON
+            return JsonSerializer.Serialize(list);
+        }
+
+        private object SafeParseJson(string json)
+        {
+            try
+            {
+                return JsonSerializer.Deserialize<JsonElement>(json);
+            }
+            catch
+            {
+                return new { };
+            }
         }
 
         public ToolProbeResult ProbeToolMetadata(byte[] bytes)
