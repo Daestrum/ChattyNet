@@ -1,4 +1,5 @@
-﻿using ChattyNet;
+﻿using Chatty.Shared;
+using ChattyNet;
 using ChattyNet.Shared;   // so it can see MemoryDB
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -27,6 +28,8 @@ This is beta test tool, so expect problems.";
         public string Type => "action";
         public string CanUse => "free";
         public bool Tool => true;
+        public int return_count => 1;
+        public string return_layout => "sqlite_response";
 
         private class SqliteRequest
         {
@@ -63,11 +66,7 @@ This is beta test tool, so expect problems.";
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new SqliteResponse
-                {
-                    Kind = "error",
-                    Error = $"Invalid arguments: {ex.Message}"
-                });
+                return ToolUtils.WrapResult(1, "error", $"Invalid arguments: {ex.Message}");
             }
 
             try
@@ -75,37 +74,22 @@ This is beta test tool, so expect problems.";
                 if (req.Action == "query")
                 {
                     var rowsJson = MemoryDB.ExecuteQuery(req.Sql);
-                    return JsonSerializer.Serialize(new SqliteResponse
-                    {
-                        Kind = "query",
-                        RowsJson = rowsJson
-                    });
+                    return ToolUtils.WrapResult(return_count, return_layout, rowsJson);
                 }
 
                 if (req.Action == "non_query")
                 {
                     var affected = MemoryDB.ExecuteNonQuery(req.Sql);
-                    return JsonSerializer.Serialize(new SqliteResponse
-                    {
-                        Kind = "non_query",
-                        Affected = affected
-                    });
+                    return ToolUtils.WrapResult(return_count, return_layout, affected.ToString());
                 }
 
-                return JsonSerializer.Serialize(new SqliteResponse
-                {
-                    Kind = "error",
-                    Error = $"Unknown action: {req.Action}"
-                });
+                return ToolUtils.WrapResult(1, "error", $"Unknown action: {req.Action}");
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new SqliteResponse
-                {
-                    Kind = "error",
-                    Error = ex.Message
-                });
+                return ToolUtils.WrapResult(1, "error", ex.Message);
             }
         }
     }
 }
+

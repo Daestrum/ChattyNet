@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Chatty.Shared;
 
 namespace GetDateAndTime
 {
@@ -25,27 +26,7 @@ namespace GetDateAndTime
             var date = now.ToString("yyyy-MM-dd");
             var time = now.ToString("HH:mm:ss");
 
-            return WrapResult(date, time);
+            return ToolUtils.WrapResult(return_count,return_layout,date, time);
         }
-        string WrapResult(params string[] data)
-        {
-            // Split the return_layout into field names
-            var names = return_layout.Split(',')
-                                     .Select(n => n.Trim())
-                                     .ToArray();
-
-            // Safety check
-            if (names.Length != data.Length)
-                throw new Exception($"Tool metadata mismatch: return_layout has {names.Length} fields but tool returned {data.Length} values.");
-
-            // Build dictionary
-            var dict = new Dictionary<string, string>();
-            for (int i = 0; i < names.Length; i++)
-                dict[names[i]] = data[i];
-
-            // Serialize to JSON
-            return JsonSerializer.Serialize(dict);
-        }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿
+﻿using Chatty.Shared;
+
 namespace TimeTool
 {
 
@@ -10,10 +11,13 @@ namespace TimeTool
         public string Type => "output";
         public string CanUse => "free";
         public bool Tool => true;
+        public int return_count => 1;
+        public string return_layout => "current_time";
+
         public string Run(string jsonInput)
         {
             var now = DateTime.Now.ToString("HH:mm:ss");
-            return $"{{ \"time\": \"{now}\" }}";
+            return ToolUtils.WrapResult(return_count, return_layout, now);
         }
     }
 }

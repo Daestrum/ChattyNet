@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Chatty.Shared;
 
 namespace WebToolRead
 {
@@ -24,6 +25,8 @@ namespace WebToolRead
         public string Type => "Output";
         public string CanUse => "free";
         public bool Tool => true;
+        public int return_count => 1;
+        public string return_layout => "text";
 
         // Escape a string for safe JSON embedding
         private static string EscapeJson(string s)
@@ -48,9 +51,10 @@ namespace WebToolRead
             try
             {
                 string url = ExtractUrl(jsonInput);
-                if (string.IsNullOrWhiteSpace(url))
-                    return JsonError("Missing or invalid URL");
+                if (string.IsNullOrWhiteSpace(url)) { 
 
+                return ToolUtils.WrapResult(1, "error", "Missing or invalid URL");
+                }    
                 string text;
                 bool sandbox;
                 try
@@ -60,15 +64,15 @@ namespace WebToolRead
                 }
                 catch (Exception ex)
                 {
-                    return JsonError($"Fetch error: {ex.Message}");
+                    return ToolUtils.WrapResult(1, "error", ex.Message);
                 }
 
                 string escaped = EscapeJson(text);
-                return $"{{\"text\": \"{escaped}\"}}";
+                return ToolUtils.WrapResult(return_count, return_layout, escaped);
             }
             catch (Exception ex)
             {
-                return JsonError($"Unexpected error: {ex.Message}");
+                 return ToolUtils.WrapResult(1, "error", ex.Message);
             }
         }
 
@@ -98,7 +102,7 @@ namespace WebToolRead
             if (sandbox)
             {
                 // return html;
-                return JsonSerializer.Serialize(new { rawHTML = html });
+                return ToolUtils.WrapResult( 1,"raw_html", html);
             }
 
             // Remove script/style blocks

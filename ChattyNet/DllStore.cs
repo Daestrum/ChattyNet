@@ -132,6 +132,19 @@ namespace ChattyNet
                 MarkEntry(name, ChangeFlag.New);
                 anyChanges = true;
                 BuildDllChain(name);              // loads assembly, creates instance, etc.
+                var entry = LiveDllStore[name];
+                var inst = entry.Instance;
+                var type = inst.GetType();
+
+                DBDllStore.Save(new DllDbEntry
+                {
+                    Name = name,
+                    Bytes = entry.Bytes,
+                    Timestamp = entry.Timestamp,
+                    Description = type.GetProperty("Description")?.GetValue(inst)?.ToString() ?? "",
+                    ReturnCount = (int?)type.GetProperty("return_count")?.GetValue(inst) ?? 0,
+                    ReturnLayout = type.GetProperty("return_layout")?.GetValue(inst)?.ToString() ?? "[]"
+                });
             }
 
             // 2. Handle UPDATED tools
@@ -166,6 +179,20 @@ namespace ChattyNet
                 BuildDllChain(name);
 
                 anyChanges = true;
+
+                var entry = LiveDllStore[name];
+                var inst = entry.Instance;
+                var type = inst.GetType();
+
+                DBDllStore.Save(new DllDbEntry
+                {
+                    Name = name,
+                    Bytes = entry.Bytes,
+                    Timestamp = entry.Timestamp,
+                    Description = type.GetProperty("Description")?.GetValue(inst)?.ToString() ?? "",
+                    ReturnCount = (int?)type.GetProperty("return_count")?.GetValue(inst) ?? 0,
+                    ReturnLayout = type.GetProperty("return_layout")?.GetValue(inst)?.ToString() ?? "[]"
+                });
             }
 
             // 3. Handle REMOVED tools
@@ -276,21 +303,6 @@ namespace ChattyNet
                     flag = ChangeFlag.None,
                     Dirty = false
                 };
-
-                // 4. Save/update DB
-                DBDllStore.Save(new DllDbEntry
-                {
-                    Name = name,
-                    Bytes = bytes,
-                    Timestamp = diskTs,
-                    Description = "",
-                    IsLive = true,
-                    IsCore = false,
-                    ChangeFlag = "None",
-                    Dirty = false,
-                    LoadCount = 0,
-                    LastLoaded = null
-                });
             }
 
             Logger.Write("\nDB: " + string.Join(", ", DBDllStore.ListNames()));
@@ -355,48 +367,7 @@ namespace ChattyNet
             Logger.Write("\nBuilt DLL chain for " + name);
         }
 
-        /*        public string GetNewToolSchema()
-                {
-                    var list = new List<object>();
-
-                    foreach (var entry in LiveDllStore.OrderBy(k => k.Key).Select(k => k.Value))
-
-                    {
-                        if (entry.Instance == null)
-                            continue;
-
-                        var inst = entry.Instance;
-                        var type = inst.GetType();
-
-                        string name = type.GetProperty("Name")?.GetValue(inst)?.ToString();
-                        string description = type.GetProperty("Description")?.GetValue(inst)?.ToString();
-                        string schemaJson = type.GetProperty("Schema")?.GetValue(inst)?.ToString();
-                        string toolType = type.GetProperty("Type")?.GetValue(inst)?.ToString();
-                        string canUse = type.GetProperty("CanUse")?.GetValue(inst)?.ToString();
-
-                        JsonElement parameters;
-                        try
-                        {
-                            parameters = JsonSerializer.Deserialize<JsonElement>(schemaJson);
-                        }
-                        catch
-                        {
-                            parameters = JsonDocument.Parse("{}").RootElement;
-                        }
-
-                        list.Add(new
-                        {
-                            name,
-                            description,
-                            parameters,
-                            canUse,
-                            type = toolType
-                        });
-                    }
-
-                    return JsonSerializer.Serialize(list); // compact one-line JSON
-                }*/
-        public string GetNewToolSchema()
+         public string GetNewToolSchema()
         {
             var list = new List<Dictionary<string, object>>();
 

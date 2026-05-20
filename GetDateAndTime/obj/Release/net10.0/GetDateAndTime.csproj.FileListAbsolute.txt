@@ -10,3 +10,7 @@ C:\chatty_net\GetDateAndTime\obj\Release\net10.0\GetDateAndTime.dll
 C:\chatty_net\GetDateAndTime\obj\Release\net10.0\refint\GetDateAndTime.dll
 C:\chatty_net\GetDateAndTime\obj\Release\net10.0\GetDateAndTime.pdb
 C:\chatty_net\GetDateAndTime\obj\Release\net10.0\ref\GetDateAndTime.dll
+C:\chatty_net\GetDateAndTime\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\GetDateAndTime\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\GetDateAndTime\obj\Release\net10.0\GetDateAndTime.csproj.AssemblyReference.cache
+C:\chatty_net\GetDateAndTime\obj\Release\net10.0\GetDateA.46CCB7D7.Up2Date

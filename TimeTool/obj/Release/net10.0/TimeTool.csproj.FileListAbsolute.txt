@@ -10,3 +10,7 @@ C:\chatty_net\TimeTool\obj\Release\net10.0\TimeTool.dll
 C:\chatty_net\TimeTool\obj\Release\net10.0\refint\TimeTool.dll
 C:\chatty_net\TimeTool\obj\Release\net10.0\TimeTool.pdb
 C:\chatty_net\TimeTool\obj\Release\net10.0\ref\TimeTool.dll
+C:\chatty_net\TimeTool\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\TimeTool\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\TimeTool\obj\Release\net10.0\TimeTool.csproj.AssemblyReference.cache
+C:\chatty_net\TimeTool\obj\Release\net10.0\TimeTool.csproj.Up2Date

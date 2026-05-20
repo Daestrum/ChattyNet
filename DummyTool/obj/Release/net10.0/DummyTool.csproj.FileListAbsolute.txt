@@ -10,3 +10,7 @@ C:\chatty_net\DummyTool\obj\Release\net10.0\DummyTool.dll
 C:\chatty_net\DummyTool\obj\Release\net10.0\refint\DummyTool.dll
 C:\chatty_net\DummyTool\obj\Release\net10.0\DummyTool.pdb
 C:\chatty_net\DummyTool\obj\Release\net10.0\ref\DummyTool.dll
+C:\chatty_net\DummyTool\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\DummyTool\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\DummyTool\obj\Release\net10.0\DummyTool.csproj.AssemblyReference.cache
+C:\chatty_net\DummyTool\obj\Release\net10.0\DummyTool.csproj.Up2Date

@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "KMMEN1F0Mtk=",
+  "dgSpecHash": "rjAGoge08Hg=",
   "success": true,
   "projectFilePath": "C:\\chatty_net\\TimeTool\\TimeTool.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\green\\.nuget\\packages\\stub.system.data.sqlite.core.netstandard\\1.0.119\\stub.system.data.sqlite.core.netstandard.1.0.119.nupkg.sha512",
+    "C:\\Users\\green\\.nuget\\packages\\system.data.sqlite.core\\1.0.119\\system.data.sqlite.core.1.0.119.nupkg.sha512"
+  ],
   "logs": []
 }

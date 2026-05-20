@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Chatty.Shared\Chatty.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

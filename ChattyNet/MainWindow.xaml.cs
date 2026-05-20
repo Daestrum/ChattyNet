@@ -149,7 +149,31 @@ namespace ChattyNet
                     break;
             }
         }
+        public string WrapResult(int return_count, string return_layout, params string[] data)
+        {
+            // Split the return_layout into field names
+            var names = return_layout.Split(',')
+                                     .Select(n => n.Trim())
+                                     .ToArray();
 
+            // Safety check
+            if (names.Length != data.Length)
+                return JsonSerializer.Serialize(new
+                {
+                    error = "Tool metadata mismatch",
+                    expected = names.Length,
+                    actual = data.Length,
+                    message = $"return_layout has {names.Length} fields but tool returned {data.Length} values."
+                });
+
+            // Build dictionary
+            var dict = new Dictionary<string, string>();
+            for (int i = 0; i < names.Length; i++)
+                dict[names[i]] = data[i];
+
+            // Serialize to JSON
+            return JsonSerializer.Serialize(dict);
+        }
         private void InputBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             if (InputBox.ContextMenu == null)

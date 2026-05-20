@@ -11,14 +11,8 @@ namespace Chatty.Shared
         public byte[] Bytes { get; set; }
         public DateTime Timestamp { get; set; }
         public string Description { get; set; }
-
-        public bool IsLive { get; set; }
-        public bool IsCore { get; set; }
-        public string ChangeFlag { get; set; }
-        public bool Dirty { get; set; }
-
-        public int LoadCount { get; set; }
-        public DateTime? LastLoaded { get; set; }
+        public int ReturnCount { get; set; }
+        public string ReturnLayout { get; set; }
     }
     public static class DBDllStore
     {
@@ -38,15 +32,10 @@ namespace Chatty.Shared
                 bytes BLOB NOT NULL,
                 timestamp TEXT NOT NULL,
                 description TEXT,
-
-                is_live INTEGER NOT NULL DEFAULT 0,
-                is_core INTEGER NOT NULL DEFAULT 0,
-                change_flag TEXT NOT NULL DEFAULT 'None',
-                dirty INTEGER NOT NULL DEFAULT 0,
-
-                load_count INTEGER NOT NULL DEFAULT 0,
-                last_loaded TEXT
-            );";
+                return_count INTEGER NOT NULL,
+                return_layout TEXT NOT NULL
+                );
+";
             cmd.ExecuteNonQuery();
         }
 
@@ -59,25 +48,17 @@ namespace Chatty.Shared
             cmd.CommandText =
             @"INSERT OR REPLACE INTO dll_store 
               (name, bytes, timestamp, description, 
-               is_live, is_core, change_flag, dirty, 
-               load_count, last_loaded)
+                return_count, return_layout)
               VALUES 
               (@name, @bytes, @timestamp, @description,
-               @is_live, @is_core, @change_flag, @dirty,
-               @load_count, @last_loaded);";
+                @return_count, @return_layout);";
 
             cmd.Parameters.AddWithValue("@name", entry.Name);
             cmd.Parameters.AddWithValue("@bytes", entry.Bytes);
             cmd.Parameters.AddWithValue("@timestamp", entry.Timestamp.ToString("o"));
             cmd.Parameters.AddWithValue("@description", entry.Description);
-
-            cmd.Parameters.AddWithValue("@is_live", entry.IsLive ? 1 : 0);
-            cmd.Parameters.AddWithValue("@is_core", entry.IsCore ? 1 : 0);
-            cmd.Parameters.AddWithValue("@change_flag", entry.ChangeFlag);
-            cmd.Parameters.AddWithValue("@dirty", entry.Dirty ? 1 : 0);
-
-            cmd.Parameters.AddWithValue("@load_count", entry.LoadCount);
-            cmd.Parameters.AddWithValue("@last_loaded", entry.LastLoaded?.ToString("o"));
+            cmd.Parameters.AddWithValue("@return_count", entry.ReturnCount); 
+            cmd.Parameters.AddWithValue("@return_layout", entry.ReturnLayout);
 
             cmd.ExecuteNonQuery();
         }
@@ -139,8 +120,7 @@ namespace Chatty.Shared
             using var cmd = conn.CreateCommand();
             cmd.CommandText =
             @"SELECT name, bytes, timestamp, description,
-                     is_live, is_core, change_flag, dirty,
-                     load_count, last_loaded
+                return_count, return_layout,
               FROM dll_store
               WHERE name = @name;";
 
@@ -156,14 +136,8 @@ namespace Chatty.Shared
                 Bytes = (byte[])reader["bytes"],
                 Timestamp = DateTime.Parse(reader.GetString(2)),
                 Description = reader.IsDBNull(3) ? "" : reader.GetString(3),
-
-                IsLive = reader.GetInt32(4) == 1,
-                IsCore = reader.GetInt32(5) == 1,
-                ChangeFlag = reader.GetString(6),
-                Dirty = reader.GetInt32(7) == 1,
-
-                LoadCount = reader.GetInt32(8),
-                LastLoaded = reader.IsDBNull(9) ? null : DateTime.Parse(reader.GetString(9))
+                ReturnCount = reader.GetInt32(4),
+                ReturnLayout = reader.GetString(5)
             };
         }
 
@@ -177,8 +151,7 @@ namespace Chatty.Shared
             using var cmd = conn.CreateCommand();
             cmd.CommandText =
             @"SELECT name, bytes, timestamp, description,
-                     is_live, is_core, change_flag, dirty,
-                     load_count, last_loaded
+                return_count, return_layout, 
               FROM dll_store;";
 
             using var reader = cmd.ExecuteReader();
@@ -190,14 +163,8 @@ namespace Chatty.Shared
                     Bytes = (byte[])reader["bytes"],
                     Timestamp = DateTime.Parse(reader.GetString(2)),
                     Description = reader.IsDBNull(3) ? "" : reader.GetString(3),
-
-                    IsLive = reader.GetInt32(4) == 1,
-                    IsCore = reader.GetInt32(5) == 1,
-                    ChangeFlag = reader.GetString(6),
-                    Dirty = reader.GetInt32(7) == 1,
-
-                    LoadCount = reader.GetInt32(8),
-                    LastLoaded = reader.IsDBNull(9) ? null : DateTime.Parse(reader.GetString(9))
+                    ReturnCount = reader.GetInt32(4),
+                    ReturnLayout = reader.GetString(5)
                 });
             }
 

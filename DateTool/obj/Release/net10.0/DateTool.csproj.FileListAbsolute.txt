@@ -10,3 +10,7 @@ C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.dll
 C:\chatty_net\DateTool\obj\Release\net10.0\refint\DateTool.dll
 C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.pdb
 C:\chatty_net\DateTool\obj\Release\net10.0\ref\DateTool.dll
+C:\chatty_net\DateTool\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\DateTool\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.csproj.AssemblyReference.cache
+C:\chatty_net\DateTool\obj\Release\net10.0\DateTool.csproj.Up2Date

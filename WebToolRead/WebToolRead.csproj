@@ -10,4 +10,8 @@
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;C:\chatty_tools\&quot; /Y" />
   </Target>
   
+  <ItemGroup>
+    <ProjectReference Include="..\Chatty.Shared\Chatty.Shared.csproj" />
+  </ItemGroup>
+  
 </Project>

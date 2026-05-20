@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Chatty.Shared;
 
 namespace ToolReferenceGuide
 {
@@ -18,6 +19,8 @@ namespace ToolReferenceGuide
         public string Type => "output";
         public string CanUse => "free";
         public bool Tool => true;
+        public int return_count => 1;
+        public string return_layout => "template";
 
         // Escape a string for safe JSON embedding
         private static string EscapeJson(string s)
@@ -42,7 +45,7 @@ namespace ToolReferenceGuide
             try
             {
                 if (!File.Exists(TemplatePath))
-                    return JsonError("tool_template.txt not found");
+                    return ToolUtils.WrapResult(1,"error","tool_template.txt not found");
 
                 string content;
                 try
@@ -51,15 +54,15 @@ namespace ToolReferenceGuide
                 }
                 catch (Exception ex)
                 {
-                    return JsonError($"Read error: {ex.Message}");
+                    return ToolUtils.WrapResult(1,"error",ex.Message);
                 }
 
                 string escaped = EscapeJson(content);
-                return $"{{\"template\": \"{escaped}\"}}";
+                return ToolUtils.WrapResult(return_count,return_layout,escaped);
             }
             catch (Exception ex)
             {
-                return JsonError($"Unexpected error: {ex.Message}");
+                return ToolUtils.WrapResult(1,"erreor", ex.Message);
             }
         }
     }
