@@ -31,7 +31,7 @@ namespace ChattyNet
         private string toolFolder = @"C:\chatty_tools";
         private List<object> _toolSpecs;
         public DLLStore dllStore;
-
+        private string _previousToolSpecJson = "";
         public MainWindow()
         {
             Instance = this;
@@ -224,23 +224,60 @@ namespace ChattyNet
             var context = BuildContext();
             //var visibleTools = GetVisibleTools(userInput);
             //_toolSpecs = BuildToolSpecs(visibleTools);
-            
+
             _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(DLLStore.Instance._lastToolSpecJson);
 
-            // First LLM call
-            var payload = new
-            {
-                model = "nvidia/nemotron-3-nano-omni",
-                //model = _selectedModel ?? "nvidia/nemotron-3-nano-omni",
-                //model = "google/gemma-4-e4b",   // <===   Will not work with tool calls until we handle tool spec format differences (e.g. "function" vs "tool" wrapper, and "parameters" vs "args_schema")
-                //model = _selectedModel ?? "google/gemma-4-e4b",
-                //model = "mistralai/devstral-small-2-2512",
-                //model = "qwen/qwen3.6-35b-a3b",
-                messages = context,
-                tools = _toolSpecs
-            };
+                        // First LLM call
+                        var payload = new
+                        {
+                            model = "nvidia/nemotron-3-nano-omni",
+                            //model = _selectedModel ?? "nvidia/nemotron-3-nano-omni",
+                            //model = "google/gemma-4-e4b",   // <===   Will not work with tool calls until we handle tool spec format differences (e.g. "function" vs "tool" wrapper, and "parameters" vs "args_schema")
+                            //model = _selectedModel ?? "google/gemma-4-e4b",
+                            //model = "mistralai/devstral-small-2-2512",
+                            //model = "qwen/qwen3.6-35b-a3b",
+                            messages = context,
+                            tools = _toolSpecs
+                        };
 
+ /*           // Build the current ToolSpec JSON
+            string currentToolSpecJson = DLLStore.Instance._lastToolSpecJson;
+
+            // Compare with previous
+            bool toolSpecChanged = currentToolSpecJson != _previousToolSpecJson;
+
+            // Convert schema only if needed
+            if (toolSpecChanged)
+            {
+                _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(currentToolSpecJson);
+                _previousToolSpecJson = currentToolSpecJson;
+            }
+
+            // Build payload
+            object payload;
+
+            if (toolSpecChanged)
+            {
+                payload = new
+                {
+                    model = "nvidia/nemotron-3-nano-omni",
+                    messages = context,
+                    tools = _toolSpecs
+                };
+            }
+            else
+            {
+                payload = new
+                {
+                    model = "nvidia/nemotron-3-nano-omni",
+                    messages = context
+                    // no tools
+                };
+            }*/
+
+            // Send to LLM
             var doc = await _llm.ChatAsync(payload);
+
 
             var root = default(JsonElement);
             var msg = default(JsonElement);
