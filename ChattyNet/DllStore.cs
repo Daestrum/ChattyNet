@@ -29,6 +29,17 @@ namespace ChattyNet
             public ChangeFlag flag { get; set; }  // New, Modified, Removed, None
             public bool Dirty { get; internal set; }
         }
+
+        public class LiveDllEntry2
+        {
+            public string ToolName { get; set; }          // <-- NEW, required
+            public AssemblyLoadContext Alc { get; set; }
+            public Assembly Assembly { get; set; }
+            public object Instance { get; set; }
+            public DateTime Timestamp { get; set; }
+        }
+
+
         public class ReserveDllEntry
         {
             public byte[] Bytes { get; set; }
@@ -87,6 +98,10 @@ namespace ChattyNet
         public Dictionary<string, LiveDllEntry> LiveDllStore = new();
         public Dictionary<string, ReserveDllEntry> ReserveDllStore = new();
 
+        public Dictionary<string, LiveDllEntry2> LiveDllStore2 = new();
+
+        private byte[] DllBytes;
+
          public List<object> ConvertSchemaToToolList(string schemaJson)
         {
             var schema = JsonSerializer.Deserialize<List<ToolSchema>>(schemaJson)
@@ -116,7 +131,40 @@ namespace ChattyNet
 
             return list;
         }
+        public void ApplyChanges2(RefreshBatch batch)
+        {
+            foreach (var n in batch.NewTools)
+                HandleNew2(n);
 
+            foreach (var n in batch.UpdatedTools)
+                HandleUpdated2(n);
+
+            foreach (var n in batch.RemovedTools)
+                HandleRemoved2(n);
+
+            RebuildMappings2();
+            RebuildSchema2();
+        }
+
+        private void RebuildMappings2()
+        {
+            DllNameToToolName.Clear();
+            ToolNameToDllName.Clear();
+
+            foreach (var kvp in LiveDllStore2)
+            {
+                var dllName = kvp.Key;
+                var entry = kvp.Value;
+
+                if (!string.IsNullOrWhiteSpace(entry.ToolName))
+                {
+                    DllNameToToolName[dllName] = entry.ToolName;
+                    ToolNameToDllName[entry.ToolName] = dllName;
+
+                    Logger.Write($"Map2: DLL '{dllName}' → Tool '{entry.ToolName}'");
+                }
+            }
+        }
 
         public void ApplyChanges(RefreshBatch batch)
         {
@@ -257,6 +305,51 @@ namespace ChattyNet
             }
 
         }
+        private void HandleRemoved2(string name)
+        {
+            // Unload runtime if present
+            UnloadLiveEntry2(name);
+
+            // Remove from DB
+            DBDllStore.Delete(name);
+        }
+        private void RebuildSchema2()
+        {
+            var list = new List<Dictionary<string, object>>();
+
+            foreach (var entry in LiveDllStore2.Values.OrderBy(e => e.ToolName))
+            {
+                var inst = entry.Instance;
+                if (inst == null)
+                    continue;
+
+                var type = inst.GetType();
+
+                var spec = new Dictionary<string, object>
+                {
+                    ["name"] = type.GetProperty("Name")?.GetValue(inst),
+                    ["description"] = type.GetProperty("Description")?.GetValue(inst),
+                    ["parameters"] = SafeParseJson(type.GetProperty("Schema")?.GetValue(inst)?.ToString()),
+                    ["canUse"] = type.GetProperty("CanUse")?.GetValue(inst),
+                    ["type"] = type.GetProperty("Type")?.GetValue(inst)
+                };
+
+                // Add any extra public properties
+                foreach (var prop in type.GetProperties())
+                {
+                    if (!spec.ContainsKey(prop.Name))
+                    {
+                        var value = prop.GetValue(inst);
+                        if (value != null)
+                            spec[prop.Name] = value;
+                    }
+                }
+
+                list.Add(spec);
+            }
+
+            _lastToolSpecJson = JsonSerializer.Serialize(list);
+        }
 
         public void ReadDllFromDisk(string name)
         {
@@ -306,6 +399,75 @@ namespace ChattyNet
             }
 
             Logger.Write("\nDB: " + string.Join(", ", DBDllStore.ListNames()));
+        }
+        public void ReadDllFromDisk2(string name)
+        {
+            var diskTs = GetRealTimestamp(name);
+            byte[] bytes = null;
+            bool changed = false;
+
+            // Try live
+            LiveDllStore.TryGetValue(name, out var live);
+
+            // Try DB
+            var db = DBDllStore.Get(name);
+
+            // CASE 1: Not in live AND not in DB → load from disk
+            if (live == null && db == null)
+            {
+                changed = true;
+                bytes = GetRealBytes(name);
+
+                DBDllStore.Save(new DllDbEntry
+                {
+                    Name = name,
+                    Bytes = bytes,
+                    Timestamp = diskTs
+                });
+            }
+            else if (live == null && db != null)
+            {
+                // CASE 2: Not in live BUT in DB
+                if (db.Timestamp == diskTs)
+                {
+                    // DB is valid → use DB bytes
+                    changed = true;
+                    bytes = db.Bytes;
+                }
+                else
+                {
+                    // DB is stale → reload from disk
+                    changed = true;
+                    bytes = GetRealBytes(name);
+
+                    DBDllStore.Save(new DllDbEntry
+                    {
+                        Name = name,
+                        Bytes = bytes,
+                        Timestamp = diskTs
+                    });
+                }
+            }
+            else
+            {
+                // CASE 3: In live
+                if (live.Timestamp != diskTs)
+                {
+                    // Live is stale → reload from disk
+                    changed = true;
+                    bytes = GetRealBytes(name);
+
+                    DBDllStore.Save(new DllDbEntry
+                    {
+                        Name = name,
+                        Bytes = bytes,
+                        Timestamp = diskTs
+                    });
+                }
+            }
+
+            // Set global buffer for caller
+            DllBytes = changed ? bytes : null;
         }
 
 
@@ -367,7 +529,91 @@ namespace ChattyNet
             Logger.Write("\nBuilt DLL chain for " + name);
         }
 
-         public string GetNewToolSchema()
+        private void HandleNew2(string name)
+        {
+            // Step 1: Resolve truth (disk vs DB)
+            ReadDllFromDisk2(name);
+
+            // Step 2: If bytes exist, build runtime
+            if (DllBytes != null)
+                BuildDllChain2(name);
+        }
+        private void HandleUpdated2(string name)
+        {
+            // Step 1: Unload old runtime
+            UnloadLiveEntry2(name);
+
+            // Step 2: Resolve truth (disk vs DB)
+            ReadDllFromDisk2(name);
+
+            // Step 3: If bytes changed, rebuild runtime
+            if (DllBytes != null)
+                BuildDllChain2(name);
+        }
+        private void UnloadLiveEntry2(string name)
+        {
+            if (LiveDllStore2.TryGetValue(name, out var live))
+            {
+                try
+                {
+                    live.Alc?.Unload();
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+                catch { }
+            }
+
+            LiveDllStore2.Remove(name);
+        }
+
+        private void BuildDllChain2(string name)
+        {
+            var dbEntry = DBDllStore.Get(name);
+            if (dbEntry == null)
+                throw new Exception($"DB entry missing for {name}");
+
+            var bytes = dbEntry.Bytes;
+            if (bytes == null || bytes.Length == 0)
+                throw new Exception($"No bytes available for {name}");
+
+            // Load assembly
+            var alc = new AssemblyLoadContext(Guid.NewGuid().ToString(), isCollectible: true);
+            using var ms = new MemoryStream(bytes);
+            var asm = alc.LoadFromStream(ms);
+
+            // Find tool type
+            var toolType = asm.GetTypes()
+                .FirstOrDefault(t =>
+                    t.IsClass &&
+                    !t.IsAbstract &&
+                    t.GetProperty("Name") != null &&
+                    t.GetProperty("Description") != null &&
+                    t.GetProperty("Schema") != null &&
+                    t.GetProperty("Type") != null &&
+                    t.GetProperty("CanUse") != null);
+
+            if (toolType == null)
+                throw new Exception($"No tool type found in {name}");
+
+            // Create instance
+            var instance = Activator.CreateInstance(toolType);
+            var toolName = toolType.GetProperty("Name")?.GetValue(instance)?.ToString();
+
+            // Store in Live2
+            LiveDllStore2[name] = new LiveDllEntry2
+            {
+                ToolName = toolName,
+                Alc = alc,
+                Assembly = asm,
+                Instance = instance,
+                Timestamp =  dbEntry.Timestamp
+            };
+
+            Logger.Write($"\nBuilt DLL chain for {name}");
+        }
+
+
+        public string GetNewToolSchema()
         {
             var list = new List<Dictionary<string, object>>();
 

@@ -10,6 +10,7 @@ namespace Chatty.Shared
         public string Name { get; set; }
         public byte[] Bytes { get; set; }
         public DateTime Timestamp { get; set; }
+        public int IsLive { get; set; }
         public string Description { get; set; }
         public int ReturnCount { get; set; }
         public string ReturnLayout { get; set; }
@@ -31,6 +32,7 @@ namespace Chatty.Shared
                 name TEXT PRIMARY KEY,
                 bytes BLOB NOT NULL,
                 timestamp TEXT NOT NULL,
+                live INTEGER NOT NULL DEFAULT 0,    
                 description TEXT,
                 return_count INTEGER NOT NULL,
                 return_layout TEXT NOT NULL
@@ -47,15 +49,16 @@ namespace Chatty.Shared
             using var cmd = conn.CreateCommand();
             cmd.CommandText =
             @"INSERT OR REPLACE INTO dll_store 
-              (name, bytes, timestamp, description, 
+              (name, bytes, timestamp, live, description, 
                 return_count, return_layout)
               VALUES 
-              (@name, @bytes, @timestamp, @description,
+              (@name, @bytes, @timestamp, @live, @description,
                 @return_count, @return_layout);";
 
             cmd.Parameters.AddWithValue("@name", entry.Name);
             cmd.Parameters.AddWithValue("@bytes", entry.Bytes);
             cmd.Parameters.AddWithValue("@timestamp", entry.Timestamp.ToString("o"));
+            cmd.Parameters.AddWithValue("@live", entry.IsLive);
             cmd.Parameters.AddWithValue("@description", entry.Description);
             cmd.Parameters.AddWithValue("@return_count", entry.ReturnCount); 
             cmd.Parameters.AddWithValue("@return_layout", entry.ReturnLayout);
@@ -70,7 +73,7 @@ namespace Chatty.Shared
             conn.Open();
 
             using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT name FROM dll_store WHERE is_live = 1 ORDER BY name;";
+            cmd.CommandText = "SELECT name FROM dll_store WHERE live = 1 ORDER BY name;";
 
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -89,7 +92,7 @@ namespace Chatty.Shared
             conn.Open();
 
             using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT name FROM dll_store WHERE is_live = 0 ORDER BY name;";
+            cmd.CommandText = "SELECT name FROM dll_store WHERE live = 0 ORDER BY name;";
 
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -119,8 +122,8 @@ namespace Chatty.Shared
 
             using var cmd = conn.CreateCommand();
             cmd.CommandText =
-            @"SELECT name, bytes, timestamp, description,
-                return_count, return_layout,
+            @"SELECT name, bytes, live, timestamp, description,
+                return_count, return_layout
               FROM dll_store
               WHERE name = @name;";
 
@@ -132,12 +135,15 @@ namespace Chatty.Shared
 
             return new DllDbEntry
             {
-                Name = reader.GetString(0),
+                Name = reader.GetString(reader.GetOrdinal("name")),
                 Bytes = (byte[])reader["bytes"],
-                Timestamp = DateTime.Parse(reader.GetString(2)),
-                Description = reader.IsDBNull(3) ? "" : reader.GetString(3),
-                ReturnCount = reader.GetInt32(4),
-                ReturnLayout = reader.GetString(5)
+                Timestamp = DateTime.Parse(reader.GetString(reader.GetOrdinal("timestamp"))),
+                IsLive = reader.GetInt32(reader.GetOrdinal("live")),
+                Description = reader.IsDBNull(reader.GetOrdinal("description"))
+                     ? ""
+                     : reader.GetString(reader.GetOrdinal("description")),
+                ReturnCount = reader.GetInt32(reader.GetOrdinal("return_count")),
+                ReturnLayout = reader.GetString(reader.GetOrdinal("return_layout"))
             };
         }
 
@@ -150,8 +156,8 @@ namespace Chatty.Shared
 
             using var cmd = conn.CreateCommand();
             cmd.CommandText =
-            @"SELECT name, bytes, timestamp, description,
-                return_count, return_layout, 
+            @"SELECT name, bytes, live, timestamp, description,
+                return_count, return_layout 
               FROM dll_store;";
 
             using var reader = cmd.ExecuteReader();
@@ -159,12 +165,15 @@ namespace Chatty.Shared
             {
                 list.Add(new DllDbEntry
                 {
-                    Name = reader.GetString(0),
+                    Name = reader.GetString(reader.GetOrdinal("name")),
                     Bytes = (byte[])reader["bytes"],
-                    Timestamp = DateTime.Parse(reader.GetString(2)),
-                    Description = reader.IsDBNull(3) ? "" : reader.GetString(3),
-                    ReturnCount = reader.GetInt32(4),
-                    ReturnLayout = reader.GetString(5)
+                    Timestamp = DateTime.Parse(reader.GetString(reader.GetOrdinal("timestamp"))),
+                    IsLive = reader.GetInt32(reader.GetOrdinal("live")),
+                    Description = reader.IsDBNull(reader.GetOrdinal("description"))
+                     ? ""
+                     : reader.GetString(reader.GetOrdinal("description")),
+                    ReturnCount = reader.GetInt32(reader.GetOrdinal("return_count")),
+                    ReturnLayout = reader.GetString(reader.GetOrdinal("return_layout"))
                 });
             }
 
@@ -199,7 +208,7 @@ namespace Chatty.Shared
                 return null;
 
             var bytes = (byte[])reader["bytes"];
-            var ts = DateTime.Parse(reader.GetString(1));
+            var ts = DateTime.Parse(reader.GetString(reader.GetOrdinal("timestamp")));
 
             return (bytes, ts);
         }

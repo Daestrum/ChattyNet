@@ -1,0 +1,14 @@
+<VSTemplate Version="3.0.0" Type="Project">
+  <TemplateData>
+    <Name>Chatty Tool</Name>
+    <Description>Creates a new Chatty tool with boilerplate.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>10</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>NewChattyTool</DefaultName>
+  </TemplateData>
+
+  <TemplateContent>
+    <Project File="BlankTool.csproj" ReplaceParameters="true" />
+  </TemplateContent>
+</VSTemplate>
