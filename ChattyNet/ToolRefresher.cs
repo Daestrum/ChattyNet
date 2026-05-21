@@ -137,7 +137,7 @@ namespace ChattyNet
                     _known.Remove(knownDll);
                 }
             }
-            DLLStore.Instance.ApplyChanges(batch);
+            DLLStore.Instance.ApplyChanges2(batch);
 
         }
 

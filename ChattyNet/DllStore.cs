@@ -133,17 +133,37 @@ namespace ChattyNet
         }
         public void ApplyChanges2(RefreshBatch batch)
         {
+            bool anyChanges = false;
+
             foreach (var n in batch.NewTools)
+            {
                 HandleNew2(n);
+                anyChanges = true;
+            }
 
             foreach (var n in batch.UpdatedTools)
+            {
                 HandleUpdated2(n);
+                anyChanges = true;
+            }
 
             foreach (var n in batch.RemovedTools)
+            {
                 HandleRemoved2(n);
+                anyChanges = true;
+            }
 
-            RebuildMappings2();
-            RebuildSchema2();
+            // Only rebuild if something actually changed
+            if (anyChanges)
+            {
+                RebuildMappings2();
+                RebuildSchema2();
+            }
+
+            // Clear batch so refresher doesn't repeat
+            batch.NewTools.Clear();
+            batch.UpdatedTools.Clear();
+            batch.RemovedTools.Clear();
         }
 
         private void RebuildMappings2()
@@ -191,7 +211,7 @@ namespace ChattyNet
                     Timestamp = entry.Timestamp,
                     Description = type.GetProperty("Description")?.GetValue(inst)?.ToString() ?? "",
                     ReturnCount = (int?)type.GetProperty("return_count")?.GetValue(inst) ?? 0,
-                    ReturnLayout = type.GetProperty("return_layout")?.GetValue(inst)?.ToString() ?? "[]"
+                    ReturnLayout = type.GetProperty("return_layout")?.GetValue(inst)?.ToString() ?? "{}",
                 });
             }
 
@@ -406,26 +426,21 @@ namespace ChattyNet
             byte[] bytes = null;
             bool changed = false;
 
-            // Try live
+            // Try live (v1 store – just for timestamp comparison)
             LiveDllStore.TryGetValue(name, out var live);
 
             // Try DB
             var db = DBDllStore.Get(name);
 
-            // CASE 1: Not in live AND not in DB → load from disk
+            // CASE 1: Not in live AND not in DB → load from disk, insert minimal row
             if (live == null && db == null)
             {
                 changed = true;
                 bytes = GetRealBytes(name);
 
-                DBDllStore.Save(new DllDbEntry
-                {
-                    Name = name,
-                    Bytes = bytes,
-                    Timestamp = diskTs
-                });
+                DBDllStore.InsertIfMissing(name, bytes, diskTs);
             }
-            else if (live == null && db != null)
+            else if (live == null && db != null && db.IsLive==1)
             {
                 // CASE 2: Not in live BUT in DB
                 if (db.Timestamp == diskTs)
@@ -436,16 +451,13 @@ namespace ChattyNet
                 }
                 else
                 {
-                    // DB is stale → reload from disk
+                    // DB is stale → reload from disk, but KEEP metadata
                     changed = true;
                     bytes = GetRealBytes(name);
 
-                    DBDllStore.Save(new DllDbEntry
-                    {
-                        Name = name,
-                        Bytes = bytes,
-                        Timestamp = diskTs
-                    });
+                    db.Bytes = bytes;
+                    db.Timestamp = diskTs;
+                    DBDllStore.Save(db);   // full entry: live, description, return_layout all preserved
                 }
             }
             else
@@ -453,22 +465,29 @@ namespace ChattyNet
                 // CASE 3: In live
                 if (live.Timestamp != diskTs)
                 {
-                    // Live is stale → reload from disk
+                    // Live is stale → reload from disk, update DB but keep metadata
                     changed = true;
                     bytes = GetRealBytes(name);
 
-                    DBDllStore.Save(new DllDbEntry
+                    if (db != null)
                     {
-                        Name = name,
-                        Bytes = bytes,
-                        Timestamp = diskTs
-                    });
+                        db.Bytes = bytes;
+                        db.Timestamp = diskTs;
+                        DBDllStore.Save(db);
+                    }
+                    else
+                    {
+                        // No DB row somehow → insert minimal
+                        DBDllStore.InsertIfMissing(name, bytes, diskTs);
+                    }
                 }
             }
 
             // Set global buffer for caller
             DllBytes = changed ? bytes : null;
         }
+
+
 
 
         private DateTime GetRealTimestamp(string dllName)
@@ -608,6 +627,20 @@ namespace ChattyNet
                 Instance = instance,
                 Timestamp =  dbEntry.Timestamp
             };
+            var inst = instance;
+            var type = toolType;
+
+            var db = DBDllStore.Get(name);
+            if (db != null)
+            {
+                db.Description = type.GetProperty("Description")?.GetValue(inst)?.ToString() ?? "";
+                db.ReturnCount = (int?)type.GetProperty("return_count")?.GetValue(inst) ?? 0;
+                db.ReturnLayout = type.GetProperty("return_layout")?.GetValue(inst)?.ToString() ?? "{}";
+                db.IsLive = 1;
+                db.ToolName = toolName ?? "";
+
+                DBDllStore.Save(db);
+            }
 
             Logger.Write($"\nBuilt DLL chain for {name}");
         }
@@ -617,7 +650,7 @@ namespace ChattyNet
         {
             var list = new List<Dictionary<string, object>>();
 
-            foreach (var entry in LiveDllStore.OrderBy(k => k.Key).Select(k => k.Value))
+            foreach (var entry in LiveDllStore2.OrderBy(k => k.Key).Select(k => k.Value))
             {
                 if (entry.Instance == null)
                     continue;
@@ -740,41 +773,54 @@ namespace ChattyNet
             return name;
         }
 
-        public void Demote(string name)
+        public void Demote2(string toolName)
         {
-            var live = LiveDllStore[name];
-            ReserveDllStore[name] = new ReserveDllEntry
-            {
-                Bytes = live.Bytes,
-                Timestamp = live.Timestamp
-            };
-            LiveDllStore.Remove(name);
-        }
+            var dllName = ToolNameToDllName.ContainsKey(toolName) ? ToolNameToDllName[toolName] : null;
 
-        public void Promote(string name)
-        {
-            var reserve = ReserveDllStore[name];
-            LiveDllStore[name] = new LiveDllEntry
+            // Unload from memory
+            if (LiveDllStore2.TryGetValue(dllName, out var entry))
             {
-                Bytes = reserve.Bytes,
-                Timestamp = reserve.Timestamp
-            };
-
-            ReserveDllStore.Remove(name);
-        }
-        public void Swap(string name1, string name2)
-        {
-            bool name1IsLive = LiveDllStore.ContainsKey(name1);
-            if (name1IsLive)
-            {
-                Demote(name1);
-                Promote(name2);
+                entry.Alc.Unload();
+                LiveDllStore2.Remove(dllName);
             }
+
+            // Mark as reserve in DB
+            DBDllStore.SetLiveStatus(dllName, 0);
+
+            RebuildMappings2();
+            RebuildSchema2();
+        }
+
+
+        public void Promote2(string toolName)
+        {
+            var dllName = DBDllStore.ByName(toolName);
+
+            DBDllStore.SetLiveStatus(dllName, 1);
+
+            HandleNew2(dllName); // loads, builds, marks live
+
+            RebuildMappings2();
+            RebuildSchema2();
+        }
+
+        public void Swap2(string a, string b)
+        {
+            var aa = ToolNameToDllName.ContainsKey(a) ? ToolNameToDllName[a] : null;
+            var bb = ToolNameToDllName.ContainsKey(b) ? ToolNameToDllName[b] : null;
+
+            if (LiveDllStore2.ContainsKey(aa))
+                Demote2(aa);
             else
-            {
-                Promote(name1);
-                Demote(name2);
-            }
+                Promote2(aa);
+
+            if (LiveDllStore2.ContainsKey(bb))
+                Demote2(bb);
+            else
+                Promote2(bb);
+
+            RebuildMappings2();
+            RebuildSchema2();
         }
     }
 }

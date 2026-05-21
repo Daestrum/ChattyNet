@@ -109,21 +109,21 @@ namespace ChattyNet
                 case "demote":
                     if (argument!="")
                     {
-                        DLLStore.Instance.Demote(argument.Trim());
+                        DLLStore.Instance.Demote2(argument.Trim());
                     }
                     break;
 
                 case "promote":
                     if (argument!="")
                     {
-                        DLLStore.Instance.Promote(argument.Trim());
+                        DLLStore.Instance.Promote2(argument.Trim());
                     }
                     break;
 
                 case "swap":
                     var args = argument.Split(',', 2);
                     if (args.Length == 2)
-                        DLLStore.Instance.Swap(args[0].Trim(), args[1].Trim());
+                        DLLStore.Instance.Swap2(args[0].Trim(), args[1].Trim());
                     else
                         OutputBox.AppendText("Usage: /swap ToolA,ToolB\n");
                     break;
@@ -508,7 +508,7 @@ namespace ChattyNet
             if (!DLLStore.Instance.ToolNameToDllName.TryGetValue(toolName, out var dllName))
                 return null;
 
-            if (!DLLStore.Instance.LiveDllStore.TryGetValue(dllName, out var entry))
+            if (!DLLStore.Instance.LiveDllStore2.TryGetValue(dllName, out var entry))
                 return null;
 
             return entry.Instance;
