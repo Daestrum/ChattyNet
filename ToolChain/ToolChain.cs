@@ -37,6 +37,9 @@ Placeholder syntax IS allowed and is the correct way to pass values between step
         public string Type => "output";
         public string CanUse => "free";
         public bool Tool => true;
+        public int return_count => 1;
+        public string return_layout => "final_result_of_chain";
+
 
         public string Run(string jsonInput)
         {

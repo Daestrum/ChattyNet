@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BlankTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b37794349d558798480ad756dbb1f88f7c4f7416")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+773a639d527ae3d30d2b29c7710c767796ad449f")]
 [assembly: System.Reflection.AssemblyProductAttribute("BlankTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BlankTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

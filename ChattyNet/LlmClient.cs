@@ -22,13 +22,31 @@ namespace ChattyNet
         public async Task<JsonDocument> ChatAsync(object payload)
         {
             var json = JsonSerializer.Serialize(payload);
+            Logger.Write($"[LLM SEND] {json}");
+
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _http.PostAsync($"{_url}/v1/chat/completions", content);
+
             var body = await response.Content.ReadAsStringAsync();
 
-            return JsonDocument.Parse(body);
+            Logger.Write($"[LLM RAW RESPONSE] {body}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"LLM returned HTTP {response.StatusCode}: {body}");
+            }
+
+            try
+            {
+                return JsonDocument.Parse(body);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to parse LLM JSON:\n{body}", ex);
+            }
         }
+
 
     }
 }

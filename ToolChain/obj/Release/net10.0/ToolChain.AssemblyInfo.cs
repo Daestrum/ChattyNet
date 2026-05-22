@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ToolChain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+788001d1167a49f8008e9c98245a498d2a2a35fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+773a639d527ae3d30d2b29c7710c767796ad449f")]
 [assembly: System.Reflection.AssemblyProductAttribute("ToolChain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ToolChain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
