@@ -46,17 +46,18 @@ namespace ChattyNet
             OutputBox.FontSize = 18;
             InputBox.FontSize = 18;
 
-           // modelInst = new ModelEngine("nvidia/nemotron-3-nano-omni");
+            //nvidia/nemotron-3-nano-omni
 
-            _llm = new LlmClient("http://127.0.0.1:1234");
-            
+            _llm = new LlmClient($"http://127.0.0.1:1234");
 
             ToolRefresher.Initialize(toolFolder);
-            ToolRefresher.Start();   // ← leave commented for now
+            ToolRefresher.Start();  
 
             _tools = new List<(object Instance, ToolLoadContext Context)>();
+
             DebugToolList("Startup");
         }
+
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedModel == null)
@@ -233,13 +234,13 @@ namespace ChattyNet
 
             _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(DLLStore.Instance._lastToolSpecJson);
 
-                        // First LLM call
-                        var payload = new
-                        {
-                            model = "nvidia/nemotron-3-nano-omni",
-                            messages = context,
-                            tools = _toolSpecs
-                        };
+            // First LLM call
+            var payload = new
+            {
+                model = "nvidia/nemotron-3-nano-omni",
+                messages = context,
+                tools = _toolSpecs
+            };
 
             Logger.Write($">>>Stage : after _toolspec build");
 

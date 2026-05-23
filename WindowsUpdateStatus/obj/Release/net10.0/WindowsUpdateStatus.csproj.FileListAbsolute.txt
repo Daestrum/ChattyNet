@@ -1,0 +1,16 @@
+C:\chatty_net\WindowsUpdateStatus\bin\Release\net10.0\WindowsUpdateStatus.deps.json
+C:\chatty_net\WindowsUpdateStatus\bin\Release\net10.0\WindowsUpdateStatus.dll
+C:\chatty_net\WindowsUpdateStatus\bin\Release\net10.0\WindowsUpdateStatus.pdb
+C:\chatty_net\WindowsUpdateStatus\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\WindowsUpdateStatus\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsUpdateStatus.csproj.AssemblyReference.cache
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsUpdateStatus.GeneratedMSBuildEditorConfig.editorconfig
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsUpdateStatus.AssemblyInfoInputs.cache
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsUpdateStatus.AssemblyInfo.cs
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsUpdateStatus.csproj.CoreCompileInputs.cache
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsUpdateStatus.sourcelink.json
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsU.542B1AFA.Up2Date
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsUpdateStatus.dll
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\refint\WindowsUpdateStatus.dll
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\WindowsUpdateStatus.pdb
+C:\chatty_net\WindowsUpdateStatus\obj\Release\net10.0\ref\WindowsUpdateStatus.dll

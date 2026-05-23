@@ -134,6 +134,17 @@ namespace ChattyNet
         public void ApplyChanges2(RefreshBatch batch)
         {
             bool anyChanges = false;
+            
+            // ensure promoted tools are built and stored in DllLiveStore
+            var dbLive = DBDllStore.GetLiveDLLs();
+            foreach (var dllName in dbLive)
+            {
+                if (!LiveDllStore2.ContainsKey(dllName))
+                {
+                    PromoteToLive(dllName);   // ← calls BuildDllChain2
+                    anyChanges = true;
+                }
+            }
 
             foreach (var n in batch.NewTools)
             {
@@ -153,12 +164,22 @@ namespace ChattyNet
                 anyChanges = true;
             }
 
+            // 🔥 Reconcile DB live state with LiveDllStore2
+            foreach (var dllName in LiveDllStore2.Keys.ToList())
+            {
+                if (!dbLive.Contains(dllName))
+                {
+                    LiveDllStore2.Remove(dllName);   // ← the one line you want
+                    anyChanges = true;
+                }
+            }
             // Only rebuild if something actually changed
             if (anyChanges)
             {
                 RebuildMappings2();
                 RebuildSchema2();
             }
+
 
             // Clear batch so refresher doesn't repeat
             batch.NewTools.Clear();
@@ -644,7 +665,10 @@ namespace ChattyNet
 
             Logger.Write($"\nBuilt DLL chain for {name}");
         }
-
+        private void PromoteToLive(string name)
+        {
+            BuildDllChain2(name);
+        }
 
         public string GetNewToolSchema()
         {

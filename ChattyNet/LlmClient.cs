@@ -30,7 +30,7 @@ namespace ChattyNet
 
             var body = await response.Content.ReadAsStringAsync();
 
-            Logger.Write($"[LLM RAW RESPONSE] {body}");
+            //Logger.Write($"[LLM RAW RESPONSE] {body}");
 
             if (!response.IsSuccessStatusCode)
             {
