@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DateTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+68f96053a2a3dd92dcee7504a461668aec940bdb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+82136b92d5a9cabcbc0fec41afa3887f674b6aa8")]
 [assembly: System.Reflection.AssemblyProductAttribute("DateTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DateTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

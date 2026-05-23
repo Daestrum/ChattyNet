@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chatty.Shared;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -141,6 +142,66 @@ namespace ChattyNet
             DLLStore.Instance.ApplyChanges2(batch);
 
         }
+        private static void ScanFolder2()
+        {
+            NewTools.Clear();
+            UpdatedTools.Clear();
+            RemovedTools.Clear();
+
+            RefreshBatch batch = new RefreshBatch();
+
+            if (!Directory.Exists(_folder))
+                return;
+
+            var diskDlls = Directory.GetFiles(_folder, "*.dll")
+                                    .Select(Path.GetFileNameWithoutExtension)
+                                    .ToList();
+
+            var dbDlls = DBDllStore.ListNames();   // you already have this
+
+            // NEW = disk - db
+            foreach (var name in diskDlls)
+            {
+                var dbEntry = DBDllStore.GetBytesAndTimestamp(name);
+                if (dbEntry == null)
+                {
+                    Logger.Write($"[Refresher] NEW tool detected: {name}");
+                    batch.NewTools.Add(name);
+                }
+            }
+
+            // REMOVED = db - disk
+            foreach (var name in dbDlls)
+            {
+                if (!diskDlls.Contains(name))
+                {
+                    Logger.Write($"[Refresher] REMOVED tool detected: {name}");
+                    batch.RemovedTools.Add(name);
+                }
+            }
+
+            // UPDATED = hash mismatch
+            foreach (var name in diskDlls)
+            {
+                var dbEntry = DBDllStore.GetBytesAndTimestamp(name);
+                if (dbEntry == null)
+                    continue; // already handled as NEW
+
+                var diskBytes = File.ReadAllBytes(Path.Combine(_folder, name + ".dll"));
+
+                var dbHash = ComputeByteHash(dbEntry.Value.bytes);
+                var diskHash = ComputeHash(Path.Combine(_folder, name + ".dll"));
+
+                if (dbHash != diskHash)
+                {
+                    Logger.Write($"[Refresher] UPDATED tool detected: {name}");
+                    batch.UpdatedTools.Add(name);
+                }
+            }
+
+            // then pass batch to ApplyChanges2
+            DLLStore.Instance.ApplyChanges2(batch);
+        }
 
         private static string ComputeHash(string file)
         {
@@ -149,6 +210,14 @@ namespace ChattyNet
             var hash = sha.ComputeHash(stream);
             return BitConverter.ToString(hash).Replace("-", "");
         }
+
+        private static string ComputeByteHash(byte[] data)
+        {
+            using var sha = SHA256.Create();
+            var hash = sha.ComputeHash(data);
+            return BitConverter.ToString(hash).Replace("-", "");
+        }
+
     }
 }
 
