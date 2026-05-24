@@ -109,3 +109,41 @@ updates are safe and leak‑free (ALCs are unloaded properly)
 startup is fast due to DB caching
 
 ChattyNet behaves like a miniature plugin engine designed specifically for AI tool use.
+
+Typical start up log:
+
+[2026-05-24 10:00:46] 
+Built DLL chain for DateTool
+[2026-05-24 10:00:46] 
+Built DLL chain for GetDateAndTime
+[2026-05-24 10:00:46] 
+Built DLL chain for TimeTool
+[2026-05-24 10:00:46] 
+Built DLL chain for ToolChain
+[2026-05-24 10:00:46] 
+Built DLL chain for ToolRefernceGuide
+[2026-05-24 10:00:46] 
+Built DLL chain for WebToolRead
+[2026-05-24 10:00:46] 
+Built DLL chain for WindowsUpdateStatus
+[2026-05-24 10:00:46] Map2: DLL 'DateTool' → Tool 'get_date'
+[2026-05-24 10:00:46] Map2: DLL 'GetDateAndTime' → Tool 'get_date_and_time'
+[2026-05-24 10:00:46] Map2: DLL 'TimeTool' → Tool 'get_time'
+[2026-05-24 10:00:46] Map2: DLL 'ToolChain' → Tool 'chain_tools'
+[2026-05-24 10:00:46] Map2: DLL 'ToolRefernceGuide' → Tool 'tool_reference_guide'
+[2026-05-24 10:00:46] Map2: DLL 'WebToolRead' → Tool 'web_tool_read'
+[2026-05-24 10:00:46] Map2: DLL 'WindowsUpdateStatus' → Tool 'windows_update_check'
+[2026-05-24 10:10:32] [Refresher] UPDATED tool detected: DateTool
+[2026-05-24 10:10:32] 
+Reading real bytes for DateTool from disk at C:\chatty_tools
+[2026-05-24 10:10:32] 
+Built DLL chain for DateTool
+[2026-05-24 10:10:32] Map2: DLL 'DateTool' → Tool 'get_date'
+[2026-05-24 10:10:32] Map2: DLL 'GetDateAndTime' → Tool 'get_date_and_time'
+[2026-05-24 10:10:32] Map2: DLL 'TimeTool' → Tool 'get_time'
+[2026-05-24 10:10:32] Map2: DLL 'ToolChain' → Tool 'chain_tools'
+[2026-05-24 10:10:32] Map2: DLL 'ToolRefernceGuide' → Tool 'tool_reference_guide'
+[2026-05-24 10:10:32] Map2: DLL 'WebToolRead' → Tool 'web_tool_read'
+[2026-05-24 10:10:32] Map2: DLL 'WindowsUpdateStatus' → Tool 'windows_update_check'
+[2026-05-24 10:12:36] [10:12:36] ToolCall  ChatID=940034277  Tool=get_date  Args={}
+[2026-05-24 10:12:36] [10:12:36] ToolReply ChatID=940034277  Reply={"current_date":"24-05-2026"}
