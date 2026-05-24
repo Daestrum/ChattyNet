@@ -1,0 +1,16 @@
+C:\chatty_net\CodeBundler\bin\Release\net10.0\CodeBundler.deps.json
+C:\chatty_net\CodeBundler\bin\Release\net10.0\CodeBundler.dll
+C:\chatty_net\CodeBundler\bin\Release\net10.0\CodeBundler.pdb
+C:\chatty_net\CodeBundler\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\CodeBundler\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBundler.csproj.AssemblyReference.cache
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBundler.GeneratedMSBuildEditorConfig.editorconfig
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBundler.AssemblyInfoInputs.cache
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBundler.AssemblyInfo.cs
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBundler.csproj.CoreCompileInputs.cache
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBundler.sourcelink.json
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBund.EA524E68.Up2Date
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBundler.dll
+C:\chatty_net\CodeBundler\obj\Release\net10.0\refint\CodeBundler.dll
+C:\chatty_net\CodeBundler\obj\Release\net10.0\CodeBundler.pdb
+C:\chatty_net\CodeBundler\obj\Release\net10.0\ref\CodeBundler.dll

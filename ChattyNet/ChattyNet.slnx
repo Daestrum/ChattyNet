@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="../Chatty.Shared/Chatty.Shared.csproj" Id="0431f915-21da-4d67-b5b9-f1f9eb63cbf8" />
+  <Project Path="../CodeBundler/CodeBundler.csproj" Id="d10e7ebb-3120-4487-9f55-0d8ea5bcf16c" />
   <Project Path="../DateTool/DateTool.csproj" />
   <Project Path="../DummyTool/DummyTool.csproj" Id="91ea8735-8785-460e-a4b8-7c7df88d51e9" />
   <Project Path="../GetDateAndTime/GetDateAndTime.csproj" Id="baab0b19-308f-444e-bb29-798e8c83ffa5" />
