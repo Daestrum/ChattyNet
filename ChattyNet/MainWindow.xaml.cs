@@ -55,7 +55,7 @@ namespace ChattyNet
 
             _tools = new List<(object Instance, ToolLoadContext Context)>();
 
-            DebugToolList("Startup");
+            //DebugToolList("Startup");
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -103,9 +103,9 @@ namespace ChattyNet
             var command = parts[0].ToLower();
             var argument = parts.Length > 1 ? parts[1] : "";
 
-            Logger.Write($"[DEBUG] Directive raw: '{directive}'\n");
-            Logger.Write($"[DEBUG] parts : '{parts[0]}'\n");
-            Logger.Write($"[DEBUG] command : '{command}'");
+            //Logger.Write($"[DEBUG] Directive raw: '{directive}'\n");
+            //Logger.Write($"[DEBUG] parts : '{parts[0]}'\n");
+            //Logger.Write($"[DEBUG] command : '{command}'");
 
 
             switch (command)
@@ -226,11 +226,12 @@ namespace ChattyNet
             // Add user message to rolling buffer
             AddMessage("user", userInput);
      
-            Logger.Write($">>>user input: {userInput}");
+            //Logger.Write($">>>user input: {userInput}");
         
             // Build context + visible tools
             var context = BuildContext();
-            Logger.Write($">>>Stage : after context build");
+            
+            //Logger.Write($">>>Stage : after context build");
 
             _toolSpecs = DLLStore.Instance.ConvertSchemaToToolList(DLLStore.Instance._lastToolSpecJson);
 
@@ -247,7 +248,7 @@ namespace ChattyNet
             // Send to LLM
             var doc = await _llm.ChatAsync(payload);
 
-            Logger.Write($">>>Stage : after doc = chatasync");
+            //Logger.Write($">>>Stage : after doc = chatasync");
 
             var root = default(JsonElement);
             var msg = default(JsonElement);

@@ -22,7 +22,7 @@ namespace ChattyNet
         public async Task<JsonDocument> ChatAsync(object payload)
         {
             var json = JsonSerializer.Serialize(payload);
-            Logger.Write($"[LLM SEND] {json}");
+            //Logger.Write($"[LLM SEND] {json}");
 
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -34,6 +34,7 @@ namespace ChattyNet
 
             if (!response.IsSuccessStatusCode)
             {
+                Logger.Write($"[LLM ERROR] {response.StatusCode} " + body);
                 throw new Exception($"LLM returned HTTP {response.StatusCode}: {body}");
             }
 
@@ -43,6 +44,7 @@ namespace ChattyNet
             }
             catch (Exception ex)
             {
+                Logger.Write($"[LLM JSON PARSE ERROR] {ex.Message}");
                 throw new Exception($"Failed to parse LLM JSON:\n{body}", ex);
             }
         }

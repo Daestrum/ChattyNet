@@ -65,7 +65,7 @@ namespace ChattyNet
             {
                 try
                 {
-                    ScanFolder();
+                    ScanFolder2();   // was just scanfolder before, but now we have a more efficient version that uses the DB as source of truth
                 }
                 catch (Exception ex)
                 {
