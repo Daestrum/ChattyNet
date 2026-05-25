@@ -1,6 +1,7 @@
 ﻿using Chatty.Shared;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -33,6 +34,7 @@ namespace ChattyNet
         public DLLStore dllStore;
         private string _previousToolSpecJson = "";
         private ModelEngine modelInst;
+
         public MainWindow()
         {
             Instance = this;
@@ -348,7 +350,7 @@ namespace ChattyNet
                 ApplyRefresherChanges();
             return text;
         }
- 
+
         private void ApplyRefresherChanges()
         {
             if (_isToolInUse)

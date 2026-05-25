@@ -8,17 +8,34 @@ namespace CodeBundler
     {
         public string Name => "code_bundler";
         public string Description =>
-            "Runs the B4X CodeBundle.jar tool using a specified .b4j file and output JSON path.";
+           "用 CodeBundle.jar 处理 .b4j 文件并生成 JSON。";
+            //"Runs the B4X CodeBundle.jar tool using a specified .b4j file and output JSON path.";
 
         public string Schema =>
-        @"{
+@"{
+  ""type"": ""object"",
+  ""properties"": {
+    ""project_dir"": {
+      ""type"": ""string"",
+      ""description"": ""要处理的 .b4j 文件完整路径""
+    },
+    ""output_Json"": {
+      ""type"": ""string"",
+      ""description"": ""生成的 JSON 输出路径""
+    }
+  },
+  ""required"": [""project_dir"", ""output_Json""]
+}
+";
+
+ /*       @"{
             ""type"": ""object"",
             ""properties"": {
                 ""project_dir"": { ""type"": ""string"", ""description"": ""Full path to the .b4j file"" },
                 ""output_Json"": { ""type"": ""string"", ""description"": ""Full path to the output JSON file"" }
             },
             ""required"": [""project_dir"", ""output_Json""]
-        }";
+        }";*/
 
         public string Type => "output";
         public string CanUse => "free";
