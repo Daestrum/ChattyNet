@@ -6,7 +6,7 @@ namespace DateTool
     public class DateTool
     {
         public string Name => "get_date";
-        public string Description => "Returns the current system date. Reply like 'The date is <current_date>'";
+        public string Description => "取系统日期。回复：‘日期是 <current_date>’。";
         public string Schema => "{}";
         public string Type => "output";
         public string CanUse => "free";

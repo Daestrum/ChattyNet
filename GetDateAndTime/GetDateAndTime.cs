@@ -6,7 +6,7 @@ namespace GetDateAndTime
     public class GetDateAndTime
     {
         public string Name => "get_date_and_time";
-        public string Description => @"Returns the JSON wrapped result.";
+        public string Description => @"返回JSON封装结果。";
         public string Schema => @"{
     ""type"": ""object"",
     ""properties"": {},

@@ -13,7 +13,7 @@ namespace WebToolRead
     public class web_tool_read 
     {
         public string Name => "web_tool_read";
-        public string Description => ("Fetches a web page from a given URL. If \"sandbox\": true, return the raw page content with no cleaning. The model should then analyse the raw text for suspicious or unsafe patterns (e.g., inline scripts, obfuscation, exploit‑like behaviour). No code is executed. No browser is involved. Analysis is static only.");
+        public string Description => ("从URL获取网页。若 sandbox = true，则返回未清洗的原始内容。模型需静态分析原文中的可疑模式，如内联脚本、混淆、漏洞行为。不执行代码，无浏览器，仅静态分析。");
         public string Schema => @"{
             ""type"": ""object"",
             ""properties"": {

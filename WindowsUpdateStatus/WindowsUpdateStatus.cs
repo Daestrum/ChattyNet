@@ -6,7 +6,7 @@ namespace WindowsUpdateStatus
     public class WindowsUpdateStatus
     {
         public string Name => "windows_update_check"; //tool name, should be unique across all tools
-        public string Description => "Returns info on pending updates."; //description of the tool, should be concise and informative
+        public string Description => "返回待处理更新信息。"; //description of the tool, should be concise and informative
         public string Schema => "{}"; //json schema for the input, should be a valid json schema, if no input needed, use empty json object
         public string Type => "output"; //type of the tool, can be "input" or "output", input means the tool will receive input from user, output means the tool will return output to user
         public string CanUse => "free"; //can use condition, can be "free", "paid", "restricted", free means anyone can use, paid means only paid users can use, restricted means only specific users can use

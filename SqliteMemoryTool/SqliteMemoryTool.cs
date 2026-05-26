@@ -9,10 +9,7 @@ namespace SqliteMemoryTool
     public class SqliteMemoryTool
     {
         public string Name => "sqlite_memory";
-        public string Description => @"
-Execute SQL against the session-scoped in-memory SQLite database.
-Use RAW SQL, but be aware that the database is shared.
-This is beta test tool, so expect problems.";
+        public string Description => @"执行会话内存SQLite的SQL。用原始SQL，数据库共享。测试版工具，可能有问题。";
         public string Schema => @"{
   ""type"": ""object"",
   ""properties"": {

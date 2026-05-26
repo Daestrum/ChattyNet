@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ToolRefernceGuide")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5936fc12f285a36c5d3d5e62a0fad7395291b4d1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+16272c6c9aa81dc7700394529f5a6d64bd03a49d")]
 [assembly: System.Reflection.AssemblyProductAttribute("ToolRefernceGuide")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ToolRefernceGuide")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

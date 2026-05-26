@@ -6,7 +6,7 @@ namespace TimeTool
     public class TimeTool
     {
         public string Name => "get_time";
-        public string Description => "Returns the current system time.";
+        public string Description => "返回当前系统时间。";
         public string Schema => "{}";
         public string Type => "output";
         public string CanUse => "free";

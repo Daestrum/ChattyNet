@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CodeBundler")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+84e9c052728520d1248169d2c9febefd0870649a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+16272c6c9aa81dc7700394529f5a6d64bd03a49d")]
 [assembly: System.Reflection.AssemblyProductAttribute("CodeBundler")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CodeBundler")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

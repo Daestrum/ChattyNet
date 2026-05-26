@@ -6,10 +6,8 @@ namespace ToolChain
     {
         public string Name => "chain_tools";
         public string Description => @"
-Executes multiple tools in sequence. Each step has tool_name, args, and optional forward.
-Tools may return multiple named values. The number of returned values is specified by 'return_count' in the tool's schema, and the names of the returned values are specified by 'return_layout'.
-When a step has ""forward"": true, the chain runner exposes each returned value as a placeholder for the next step. For example, if a tool returns fields ""date"" and ""time"", the next step may reference them using ${date} and ${time}.
-Placeholder syntax IS allowed and is the correct way to pass values between steps.
+顺序执行多个工具。每步含 tool_name、args、可选 forward。工具可返回多字段，由 return_count 和 return_layout 定义。若 forward=true，则返回值可作为占位符供下一步用，如 
+𝑑𝑎𝑡𝑒、{time}。占位符语法允许并用于步骤间传值。
 ";
         public string Schema => @"
 {
@@ -24,7 +22,7 @@ Placeholder syntax IS allowed and is the correct way to pass values between step
           ""args"": { ""type"": ""object"" },
           ""forward"": {
             ""type"": ""boolean"",
-              ""description"": ""If true, chain runner injects the previous step's raw result string into this step's args under the key 'input'. No placeholder syntax is used.""
+              ""description"": ""true 时，将上一步原始结果注入本步 args 的 'input'。不使用占位符。""
           }
         },
         ""required"": [""tool_name"", ""args""]

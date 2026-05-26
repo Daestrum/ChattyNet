@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CodeBundler")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e5198ed9b4b720d1f67f29cf834e68f067d0e58a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+16272c6c9aa81dc7700394529f5a6d64bd03a49d")]
 [assembly: System.Reflection.AssemblyProductAttribute("CodeBundler")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CodeBundler")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

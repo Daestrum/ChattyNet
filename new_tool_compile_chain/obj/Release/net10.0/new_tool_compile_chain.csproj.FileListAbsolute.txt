@@ -1,0 +1,16 @@
+C:\chatty_net\new_tool_compile_chain\bin\Release\net10.0\new_tool_compile_chain.deps.json
+C:\chatty_net\new_tool_compile_chain\bin\Release\net10.0\new_tool_compile_chain.dll
+C:\chatty_net\new_tool_compile_chain\bin\Release\net10.0\new_tool_compile_chain.pdb
+C:\chatty_net\new_tool_compile_chain\bin\Release\net10.0\Chatty.Shared.dll
+C:\chatty_net\new_tool_compile_chain\bin\Release\net10.0\Chatty.Shared.pdb
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool_compile_chain.csproj.AssemblyReference.cache
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool_compile_chain.GeneratedMSBuildEditorConfig.editorconfig
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool_compile_chain.AssemblyInfoInputs.cache
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool_compile_chain.AssemblyInfo.cs
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool_compile_chain.csproj.CoreCompileInputs.cache
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool_compile_chain.sourcelink.json
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool.51246B16.Up2Date
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool_compile_chain.dll
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\refint\new_tool_compile_chain.dll
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\new_tool_compile_chain.pdb
+C:\chatty_net\new_tool_compile_chain\obj\Release\net10.0\ref\new_tool_compile_chain.dll

@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "Iq/HiHNO+7I=",
+  "success": true,
+  "projectFilePath": "C:\\chatty_net\\new_tool_compile_chain\\new_tool_compile_chain.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\green\\.nuget\\packages\\stub.system.data.sqlite.core.netstandard\\1.0.119\\stub.system.data.sqlite.core.netstandard.1.0.119.nupkg.sha512",
+    "C:\\Users\\green\\.nuget\\packages\\system.data.sqlite.core\\1.0.119\\system.data.sqlite.core.1.0.119.nupkg.sha512"
+  ],
+  "logs": []
+}

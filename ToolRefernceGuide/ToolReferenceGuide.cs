@@ -10,7 +10,7 @@ namespace ToolReferenceGuide
         private const string TemplatePath = "C:\\chatty_tools\\tool_template.txt";
 
         public string Name => "tool_reference_guide";
-        public string Description => "Returns the gold-standard tool template so Nemo can refresh the correct tool structure.";
+        public string Description => "返回标准工具模板，供刷新正确结构。";
         public string Schema => @"{
             ""type"": ""object"",
             ""properties"": {},
