@@ -1,4 +1,5 @@
 ﻿using Chatty.Shared;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -34,7 +35,7 @@ namespace ChattyNet
         public DLLStore dllStore;
         private string _previousToolSpecJson = "";
         private ModelEngine modelInst;
-
+        private string _translatorPath = @"D:\python313\scripts\argos-translate.exe";
         public MainWindow()
         {
             Instance = this;
@@ -80,11 +81,14 @@ namespace ChattyNet
         }
         private async void SendButton_Click(object sender, RoutedEventArgs e)
         {
+            bool trans = true;
+
             var input = InputBox.Text.Trim();
             if (string.IsNullOrEmpty(input))
                 return;
 
             AppendOutput($"You: {input}");
+            
 
             if (input.StartsWith("**"))
             {
@@ -94,7 +98,7 @@ namespace ChattyNet
             }
 
             var response = await ProcessMessageAsync(input);
-
+  
             AppendOutput($"ChattyNET: {response}");
 
             InputBox.Clear();
@@ -245,7 +249,7 @@ namespace ChattyNet
                 tools = _toolSpecs
             };
 
-            Logger.Write($">>>Stage : after _toolspec build");
+            //Logger.Write($">>>Stage : after _toolspec build");
 
             // Send to LLM
             var doc = await _llm.ChatAsync(payload);
@@ -350,7 +354,7 @@ namespace ChattyNet
                 ApplyRefresherChanges();
             return text;
         }
-
+ 
         private void ApplyRefresherChanges()
         {
             if (_isToolInUse)
