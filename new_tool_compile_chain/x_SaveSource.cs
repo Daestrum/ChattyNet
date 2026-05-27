@@ -32,7 +32,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-</Project>";
+
+  <ItemGroup>
+    <Reference Include=""Chatty.Shared"">
+      <HintPath>C:\chatty_net\Chatty.Shared\bin\Release\net10.0\Chatty.Shared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
+";
                 File.WriteAllText($"{dir}\\{toolName}.csproj", projectFile);
 
                 return new SaveResult

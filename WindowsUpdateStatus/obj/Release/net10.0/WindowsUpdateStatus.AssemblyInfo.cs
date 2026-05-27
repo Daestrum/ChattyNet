@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WindowsUpdateStatus")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+16272c6c9aa81dc7700394529f5a6d64bd03a49d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+387bacb47e99a74ba322a001945eb2f909d6dd49")]
 [assembly: System.Reflection.AssemblyProductAttribute("WindowsUpdateStatus")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WindowsUpdateStatus")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

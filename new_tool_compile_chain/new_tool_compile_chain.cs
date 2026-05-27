@@ -8,6 +8,7 @@ namespace new_tool_compile_chain
     {
         public string Name => "new_tool_compile_chain";
         public string Description => @"
+Look at tool_reference_guide for details on how to format the source code.
 从 C# 源码创建新工具。
 
 输入：

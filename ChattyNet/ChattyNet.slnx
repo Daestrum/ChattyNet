@@ -8,7 +8,7 @@
   <Project Path="../SqliteMemoryTool/SqliteMemoryTool.csproj" Id="ec388bbc-d37f-4f2a-bb9f-81a81762a154" />
   <Project Path="../TimeTool/TimeTool.csproj" />
   <Project Path="../ToolChain/ToolChain.csproj" Id="35df4d40-aa86-4c9c-be64-a0d6f4586c46" />
-  <Project Path="../ToolRefernceGuide/ToolRefernceGuide.csproj" Id="423cbeca-03fe-4279-ba91-5ba9f3b3baa7" />
+  <Project Path="../ToolRefernceGuide/ToolReferenceGuide.csproj" Id="423cbeca-03fe-4279-ba91-5ba9f3b3baa7" />
   <Project Path="../WebToolRead/WebToolRead.csproj" Id="5a7ff01d-2cd3-4fcb-8781-6ec92741ae50" />
   <Project Path="../WindowsUpdateStatus/WindowsUpdateStatus.csproj" Id="9e1796fd-d40d-49f0-8d44-76dc579b6d71" />
   <Project Path="ChattyNet.csproj" />

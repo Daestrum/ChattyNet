@@ -104,9 +104,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\chatty_net\\ToolRefernceGuide\\ToolRefernceGuide.csproj",
-      "projectName": "ToolRefernceGuide",
-      "projectPath": "C:\\chatty_net\\ToolRefernceGuide\\ToolRefernceGuide.csproj",
+      "projectUniqueName": "C:\\chatty_net\\ToolRefernceGuide\\ToolReferenceGuide.csproj",
+      "projectName": "ToolReferenceGuide",
+      "projectPath": "C:\\chatty_net\\ToolRefernceGuide\\ToolReferenceGuide.csproj",
       "packagesPath": "C:\\Users\\green\\.nuget\\packages\\",
       "outputPath": "C:\\chatty_net\\ToolRefernceGuide\\obj\\",
       "projectStyle": "PackageReference",
