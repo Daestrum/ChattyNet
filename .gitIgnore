@@ -1,0 +1,15 @@
+# Ignore Visual Studio junk
+.vs/
+*.user
+*.suo
+*.cache
+
+# Ignore debug symbols
+*.pdb
+
+# Ignore build folders EXCEPT the DLLs you want to keep
+bin/
+obj/
+
+# BUT allow DLLs inside bin/
+!bin/**/*.dll

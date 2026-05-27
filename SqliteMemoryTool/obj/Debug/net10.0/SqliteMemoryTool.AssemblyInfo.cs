@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SqliteMemoryTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+16272c6c9aa81dc7700394529f5a6d64bd03a49d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d185354edb65600762c25ed1e151571e7714adc7")]
 [assembly: System.Reflection.AssemblyProductAttribute("SqliteMemoryTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SqliteMemoryTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
