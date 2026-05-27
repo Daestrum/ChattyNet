@@ -6,6 +6,7 @@
   <Project Path="../GetDateAndTime/GetDateAndTime.csproj" Id="baab0b19-308f-444e-bb29-798e8c83ffa5" />
   <Project Path="../new_tool_compile_chain/new_tool_compile_chain.csproj" Id="2b0e026e-3d63-48c1-97d6-bf7ddef092f8" />
   <Project Path="../SqliteMemoryTool/SqliteMemoryTool.csproj" Id="ec388bbc-d37f-4f2a-bb9f-81a81762a154" />
+  <Project Path="../TallBoySkim/TallBoySkim.csproj" Id="17feb76c-2fdd-4db3-8f4e-219eaa489eb6" />
   <Project Path="../TimeTool/TimeTool.csproj" />
   <Project Path="../ToolChain/ToolChain.csproj" Id="35df4d40-aa86-4c9c-be64-a0d6f4586c46" />
   <Project Path="../ToolRefernceGuide/ToolReferenceGuide.csproj" Id="423cbeca-03fe-4279-ba91-5ba9f3b3baa7" />
