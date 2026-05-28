@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace TallBoySkim
@@ -8,39 +10,53 @@ namespace TallBoySkim
     {
         public static TallBoySkim.toolResult Run(string jarname)
         {
+
             var res = new TallBoySkim.toolResult();
             try
             {
-                var psi = new System.Diagnostics.ProcessStartInfo
+                // if no main to use - skip javap and return empty result with exit code 0
+                if (string.IsNullOrWhiteSpace(TallBoySkim.FirstClassForJavap))
                 {
-                    FileName = "cmd.exe",
-                    Arguments = $@"/C ""D:\Jdk27\bin\javap.exe"" -classpath ""{jarname}"" -verbose",
-                    WorkingDirectory = TallBoySkim.rootFolder,
+                    res.exit_code = "1";
+                    res.name = "Javap Error: No class name supplied";
+                    return res;
+                }
+                var argCheck = $@"/C ""D:\Jdk27\bin\javap.exe"" -public -classpath "".\{jarname}"" ""{TallBoySkim.FirstClassForJavap}""";
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "D:\\Jdk27\\bin\\javap.exe",
+                    Arguments = $"-public -classpath \"{jarname}\" \"{TallBoySkim.FirstClassForJavap}\"",
+                    WorkingDirectory = TallBoySkim.RootFolder,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
-                var proc = System.Diagnostics.Process.Start(psi);
-                string output = proc.StandardOutput.ReadToEnd();
-                string error = proc.StandardError.ReadToEnd();
+
+                var proc = Process.Start(psi);
+                string stdout = proc.StandardOutput.ReadToEnd();
+                string stderr = proc.StandardError.ReadToEnd();
                 proc.WaitForExit();
+
                 res.exit_code = proc.ExitCode.ToString();
-                if (proc.ExitCode != 0 || error != "")
+
+                if (proc.ExitCode != 0)
                 {
-                    res.name = "";
-                    res.exit_code = "" + proc.ExitCode;
+                    res.name = $"Javap failed:\nSTDERR:\n{stderr}";
                 }
                 else
                 {
-                    res.name = TallBoySkim.rootFolder + "javap_output.txt";
-                    res.exit_code = "0";
+                    var fileName = Path.Combine(TallBoySkim.RootFolder, "javap_output.txt");
+                    File.WriteAllText(fileName, stdout + "\n\n# STDERR (warnings):\n" + stderr);
+                    res.name = fileName;
                 }
+
             }
             catch (Exception ex)
             {
                 res.exit_code = "1";
-                res.name = "";
+                res.name = $"Error: failed in catch {ex.Message}";
             }
             return res;
         }

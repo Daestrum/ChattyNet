@@ -14,13 +14,14 @@ namespace TallBoySkim
                 var psi = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = "cmd.exe",
-                    Arguments = $"/C \"\"D:\\Jdk27\\bin\\jdeps.exe\" -verbose:class {jarname}\"",
-                    WorkingDirectory = TallBoySkim.rootFolder,
+                    Arguments = $"/C \"\"D:\\Jdk27\\bin\\jdeps.exe\" -summary {jarname}\"",
+                    WorkingDirectory = TallBoySkim.RootFolder,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
+
                 var proc = System.Diagnostics.Process.Start(psi);
                 string output = proc.StandardOutput.ReadToEnd();
                 string error = proc.StandardError.ReadToEnd();
@@ -35,9 +36,10 @@ namespace TallBoySkim
                 {
                     // output to a file and return the path to that file
 
-                    var root = TallBoySkim.rootFolder;
+                    var root = TallBoySkim.RootFolder;
 
-                    var fileName = root + "jdeps_output.txt";
+                    var fileName = Path.Combine(root, "jdeps_output.txt");
+
                     File.WriteAllText(fileName, output);
                     res.name = fileName;
                     res.exit_code = "0";

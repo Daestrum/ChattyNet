@@ -6,16 +6,17 @@ namespace TallBoySkim
     public class TallBoySkim
     {
         public string Name => "java_inspector";
-        public string Description => "Returns information on a jar file.";
+        public string Description => "用于分析 JAR 文件。要求用户先把 JAR 放在正确目录中。工具会读取该目录下的 JAR 并返回其内容信息。";
         public string Schema => @"{
-            ""type"": ""object"",
-            ""properties"": {
-                ""jarname"": { ""type"": ""string"",
-                               ""description"": ""Must be a full path not just a name""
-                             }
-            },
-            ""required"": [""jarname""]
-        }";
+    ""type"": ""object"",
+    ""properties"": {
+        ""jarname"": { ""type"": ""string"",
+                       ""description"": ""必须是文件名（如 file.jar），不含路径""
+                     }
+    },
+    ""required"": [""jarname""]
+}";
+
         public string Type => "output";
         public string CanUse => "on-request";
         public bool Tool => true;
@@ -27,8 +28,12 @@ namespace TallBoySkim
         private string jdeps_name = "";
         private string javap_name = "";
         private string exit_code = "";
-        
-        public static string rootFolder = "";
+
+        // SAFE: static property, not mutated by appending
+        public static string RootFolder { get; private set; } = @"c:\java-inspect\";
+
+        public static string? FirstClassForJavap = null;
+
         public string Run(string jsonInput)
         {
             // stage one: parse input
@@ -40,14 +45,35 @@ namespace TallBoySkim
 
             var input = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonInput);
 
-            jarname = Path.GetFileName(input["jarname"]);
+            // normalise jar name
+            var jarnameNoExt = Path.GetFileNameWithoutExtension(input["jarname"]);
+            jarname = jarnameNoExt + ".jar";
 
-            rootFolder = Path.GetDirectoryName(jarname) + @"\";
+            // build safe folder path
+            var baseFolder = @"c:\java-inspect\";
+            RootFolder = Path.Combine(baseFolder, jarnameNoExt);
 
+            // ensure folder exists
+            if (!Directory.Exists(RootFolder))
+            {
+                exit_code = "1";
+                return ToolUtils.WrapResult(2, "Error, Message", exit_code,
+                    $"Folder '{RootFolder}' does not exist. Place the jar file there first.");
+            }
+            // check for exactly one jar file
+            var jars = Directory.GetFiles(RootFolder, "*.jar");
+            if (jars.Length == 0)
+            {
+                exit_code = "1";
+                return ToolUtils.WrapResult(2, "Error, Message", exit_code, "No jar file found in folder");
+            }
+            if (jars.Length > 1)
+            {
+                exit_code = "1";
+                return ToolUtils.WrapResult(2, "Error, Message", exit_code, "Multiple jar files found in folder");
+            }
             // stage two: run jar tf
-            var res = new toolResult();
-            res = JarFt.Run(jarname);
-
+                var res = JarFt.Run(jarname);
             if (res.exit_code != "0")
             {
                 exit_code = res.exit_code;
@@ -57,20 +83,21 @@ namespace TallBoySkim
 
             // stage three: run jdeps
             res = JdepsTool.Run(jarname);
-
             if (res.exit_code != "0")
             {
                 exit_code = res.exit_code;
                 return ToolUtils.WrapResult(2, "Error, Message", exit_code, "Jdeps tool failed to run");
             }
             jdeps_name = res.name;
-            // stage four: run javap
-            res = JavapTool.Run(jarname);
 
+            // stage four: run javap
+
+
+            res = JavapTool.Run(jarname);
             if (res.exit_code != "0")
             {
                 exit_code = res.exit_code;
-                return ToolUtils.WrapResult(2, "Error, Message", exit_code, "Javap tool failed to run");
+                return ToolUtils.WrapResult(2, "Error, Message", exit_code, res.name);
             }
             javap_name = res.name;
 

@@ -36,6 +36,7 @@ namespace ChattyNet
         private string _previousToolSpecJson = "";
         private ModelEngine modelInst;
         private string _translatorPath = @"D:\python313\scripts\argos-translate.exe";
+        private int _maxDebugMessageLength = 500;
         public MainWindow()
         {
             Instance = this;
@@ -507,8 +508,8 @@ namespace ChattyNet
 
         private void LogToolReply(string chatId, string replyJson)
         {
-            var truncated = replyJson.Length > 100
-                ? replyJson.Substring(0, 100) + "..."
+            var truncated = replyJson.Length > _maxDebugMessageLength
+                ? replyJson.Substring(0, _maxDebugMessageLength) + "..."
                 : replyJson;
 
             Logger.Write(
